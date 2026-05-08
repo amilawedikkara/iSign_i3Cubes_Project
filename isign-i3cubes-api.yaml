@@ -13,9 +13,6 @@ servers:
 tags:
   - name: Authentication
     description: User authentication APIs
-tags:
-  - name: Authentication
-    description: User authentication APIs
 
   - name: User Management
     description: Admin portal user management APIs
@@ -195,6 +192,36 @@ paths:
       responses:
         "200":
           description: Users fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  users:
+                    type: array
+
+                    items:
+                      $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
 components:
   securitySchemes:
     bearerAuth:
