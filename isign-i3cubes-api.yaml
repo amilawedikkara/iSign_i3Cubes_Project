@@ -88,6 +88,10 @@ paths:
 
                       role:
                         type: string
+                        enum:
+                          - ADMIN
+                          - EME_MANAGER
+                          - REGIONAL_MANAGER
                         example: ADMIN
 
         "401":
@@ -133,39 +137,30 @@ paths:
 
                   user:
                     $ref: "#/components/schemas/User"
+                  assignedRegion:
+                    type: string
+                    example: Western Province
 
-                    properties:
-                      id:
-                        type: integer
-                        example: 101
+                  assignedLocations:
+                    type: array
 
-                      fullName:
-                        type: string
-                        example: John Doe
+                    items:
+                      type: string
 
-                      email:
-                        type: string
-                        example: admin@isign.lk
+                    example:
+                      - Colombo Central
+                      - Kaduwela
+                      - Maharagama
+                  permissions:
+                    type: array
 
-                      role:
-                        type: string
-                        example: ADMIN
+                    items:
+                      type: string
 
-                      assignedRegion:
-                        type: string
-                        example: Western Province
-
-                      assignedLocations:
-                        type: array
-
-                        items:
-                          type: string
-
-                        example:
-                          - Colombo Central
-                          - Kaduwela
-                          - Maharagama
-
+                    example:
+                      - VIEW_ATTENDANCE
+                      - EDIT_ATTENDANCE
+                      - MANAGE_EMPLOYEES
         "401":
           description: Unauthorized
 
