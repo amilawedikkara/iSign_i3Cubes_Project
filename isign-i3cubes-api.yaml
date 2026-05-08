@@ -132,7 +132,7 @@ paths:
                     example: true
 
                   user:
-                    $ref: '#/components/schemas/User'
+                    $ref: "#/components/schemas/User"
 
                     properties:
                       id:
@@ -192,6 +192,17 @@ components:
         message:
           type: string
           example: Error message
+    ForbiddenResponse:
+      type: object
+
+      properties:
+        success:
+          type: boolean
+          example: false
+
+        message:
+          type: string
+          example: Access denied
     User:
       type: object
 
