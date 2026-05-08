@@ -132,7 +132,7 @@ paths:
                     example: true
 
                   user:
-                    type: object
+                    $ref: '#/components/schemas/User'
 
                     properties:
                       id:
