@@ -3,17 +3,123 @@ openapi: 3.0.3
 info:
   title: iSign i3Cubes API
   version: 1.0.0
-  description: API documentation for the iSign_i3Cubes_Project.
+  description: |
+    API documentation for the iSign i3Cubes Attendance Management System.
 
 servers:
-  - url: https://api.example.com
-    description: Production server
+  - url: https://api.isign.i3cubes.com
+    description: Production Server
+
+tags:
+  - name: Authentication
+    description: User authentication APIs
 
 paths:
-  /health:
-    get:
-      summary: Health Check
-      description: Verify API is running.
+  /api/v1/auth/login:
+    post:
+      tags:
+        - Authentication
+
+      summary: User Login
+      description: |
+        Authenticate portal users using username and password.
+
+        Supported Roles:
+        - Administrator
+        - EME Area Manager
+        - Regional Manager
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+                - password
+              properties:
+                username:
+                  type: string
+                  example: admin@isign.lk
+
+                password:
+                  type: string
+                  format: password
+                  example: P@ssw0rd123
+
       responses:
         "200":
-          description: API is healthy
+          description: Login successful
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  message:
+                    type: string
+                    example: Login successful
+
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI...
+
+                  user:
+                    type: object
+
+                    properties:
+                      id:
+                        type: integer
+                        example: 101
+
+                      fullName:
+                        type: string
+                        example: John Doe
+
+                      email:
+                        type: string
+                        example: admin@isign.lk
+
+                      role:
+                        type: string
+                        example: ADMIN
+
+        "401":
+          description: Invalid username or password
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+
+                  message:
+                    type: string
+                    example: Invalid credentials
+
+        "500":
+          description: Internal server error
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+
+                  message:
+                    type: string
+                    example: Internal server error
