@@ -222,6 +222,75 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ForbiddenResponse"
+
+    post:
+      tags:
+        - User Management
+
+      summary: Create User
+      description: |
+        Create new portal user.
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - fullName
+                - email
+                - password
+                - role
+
+              properties:
+                fullName:
+                  type: string
+                  example: John Doe
+
+                email:
+                  type: string
+                  example: john@isign.lk
+
+                password:
+                  type: string
+                  format: password
+                  example: P@ssw0rd123
+
+                role:
+                  type: string
+
+                  enum:
+                    - ADMIN
+                    - EME_MANAGER
+                    - REGIONAL_MANAGER
+
+                  example: EME_MANAGER
+
+      responses:
+        "201":
+          description: User created successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
 components:
   securitySchemes:
     bearerAuth:
