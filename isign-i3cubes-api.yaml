@@ -291,6 +291,129 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ForbiddenResponse"
+  /api/v1/users/{id}:
+    put:
+      tags:
+        - User Management
+
+      summary: Update User
+      description: |
+        Update existing portal user.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 101
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              properties:
+                fullName:
+                  type: string
+                  example: John Doe
+
+                email:
+                  type: string
+                  example: john@isign.lk
+
+                role:
+                  type: string
+
+                  enum:
+                    - ADMIN
+                    - EME_MANAGER
+                    - REGIONAL_MANAGER
+
+                  example: REGIONAL_MANAGER
+
+      responses:
+        "200":
+          description: User updated successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+        "404":
+          description: User not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - User Management
+
+      summary: Delete User
+      description: |
+        Delete existing portal user.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 101
+
+      responses:
+        "200":
+          description: User deleted successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: User not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   securitySchemes:
     bearerAuth:
