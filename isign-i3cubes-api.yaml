@@ -192,3 +192,28 @@ components:
         message:
           type: string
           example: Error message
+    User:
+      type: object
+
+      properties:
+        id:
+          type: integer
+          example: 101
+
+        fullName:
+          type: string
+          example: John Doe
+
+        email:
+          type: string
+          example: admin@isign.lk
+
+        role:
+          type: string
+
+          enum:
+            - ADMIN
+            - EME_MANAGER
+            - REGIONAL_MANAGER
+
+          example: ADMIN
