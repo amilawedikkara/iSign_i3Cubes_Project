@@ -1,0 +1,19 @@
+openapi: 3.0.3
+
+info:
+  title: iSign i3Cubes API
+  version: 1.0.0
+  description: API documentation for the iSign_i3Cubes_Project.
+
+servers:
+  - url: https://api.example.com
+    description: Production server
+
+paths:
+  /health:
+    get:
+      summary: Health Check
+      description: Verify API is running.
+      responses:
+        "200":
+          description: API is healthy
