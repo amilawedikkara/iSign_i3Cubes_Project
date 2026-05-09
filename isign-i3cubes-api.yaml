@@ -23,6 +23,8 @@ tags:
     description: Attendance management APIs
   - name: Roster Management
     description: Employee roster management APIs
+  - name: Device Registration
+    description: Mobile device registration APIs
 paths:
   /api/v1/auth/login:
     post:
@@ -1556,7 +1558,262 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/devices:
+    get:
+      tags:
+        - Device Registration
 
+      summary: Get Registered Devices
+      description: |
+        Returns registered mobile devices.
+
+      security:
+        - bearerAuth: []
+
+      responses:
+        "200":
+          description: Devices fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  devices:
+                    type: array
+
+                    items:
+                      type: object
+
+                      properties:
+                        device_id:
+                          type: integer
+                          example: 9001
+
+                        employee_id:
+                          type: integer
+                          example: 1001
+
+                        device_uuid:
+                          type: string
+                          example: "A1B2-C3D4-E5F6"
+
+                        device_model:
+                          type: string
+                          example: Samsung Galaxy A54
+
+                        platform:
+                          type: string
+                          example: Android
+
+                        status_id:
+                          type: integer
+                          example: 1
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+    post:
+      tags:
+        - Device Registration
+
+      summary: Register Device
+      description: |
+        Register mobile device for employee attendance usage.
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - employee_id
+                - device_uuid
+                - device_model
+                - platform
+                - status_id
+
+              properties:
+                employee_id:
+                  type: integer
+                  example: 1001
+
+                device_uuid:
+                  type: string
+                  example: "A1B2-C3D4-E5F6"
+
+                device_model:
+                  type: string
+                  example: Samsung Galaxy A54
+
+                platform:
+                  type: string
+                  example: Android
+
+                status_id:
+                  type: integer
+                  example: 1
+
+      responses:
+        "201":
+          description: Device registered successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+  /api/v1/devices/{id}:
+    put:
+      tags:
+        - Device Registration
+
+      summary: Update Device
+      description: |
+        Update registered device details.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 9001
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              properties:
+                device_model:
+                  type: string
+                  example: Samsung Galaxy A54
+
+                platform:
+                  type: string
+                  example: Android
+
+                status_id:
+                  type: integer
+                  example: 1
+
+      responses:
+        "200":
+          description: Device updated successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Device not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - Device Registration
+
+      summary: Delete Device
+      description: |
+        Delete registered device.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 9001
+
+      responses:
+        "200":
+          description: Device deleted successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Device not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   securitySchemes:
     bearerAuth:
