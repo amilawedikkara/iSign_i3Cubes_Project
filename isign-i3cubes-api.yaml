@@ -528,6 +528,57 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ForbiddenResponse"
+    post:
+      tags:
+        - Service Locations
+
+      summary: Create Service Location
+      description: |
+        Create new service location.
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - location_name
+                - region_id
+
+              properties:
+                location_name:
+                  type: string
+                  example: Colombo Central
+
+                region_id:
+                  type: integer
+                  example: 10
+
+      responses:
+        "201":
+          description: Location created successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
 components:
   securitySchemes:
     bearerAuth:
