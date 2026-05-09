@@ -13,15 +13,14 @@ servers:
 tags:
   - name: Authentication
     description: User authentication APIs
-
   - name: User Management
     description: Admin portal user management APIs
-
   - name: Service Locations
     description: Service location management APIs
-
   - name: Employee Management
     description: Employee management APIs
+  - name: Attendance Management
+    description: Attendance management APIs
 paths:
   /api/v1/auth/login:
     post:
@@ -963,6 +962,299 @@ paths:
 
         "404":
           description: Employee not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/attendance:
+    get:
+      tags:
+        - Attendance Management
+
+      summary: Get Attendance Records
+      description: |
+        Returns attendance records.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: query
+          name: employee_id
+
+          schema:
+            type: integer
+
+          example: 1001
+
+        - in: query
+          name: location_id
+
+          schema:
+            type: integer
+
+          example: 1
+
+        - in: query
+          name: attendance_date
+
+          schema:
+            type: string
+            format: date
+
+          example: 2025-01-15
+
+      responses:
+        "200":
+          description: Attendance records fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  attendance:
+                    type: array
+
+                    items:
+                      type: object
+
+                      properties:
+                        attendance_id:
+                          type: integer
+                          example: 5001
+
+                        employee_id:
+                          type: integer
+                          example: 1001
+
+                        location_id:
+                          type: integer
+                          example: 1
+
+                        check_in_time:
+                          type: string
+                          format: date-time
+
+                          example: "2025-01-15T08:30:00"
+
+                        check_out_time:
+                          type: string
+                          format: date-time
+
+                          example: "2025-01-15T17:30:00"
+
+                        status_id:
+                          type: integer
+                          example: 1
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+    post:
+      tags:
+        - Attendance Management
+
+      summary: Create Attendance Record
+      description: |
+        Create new attendance record.
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - employee_id
+                - location_id
+                - check_in_time
+                - status_id
+
+              properties:
+                employee_id:
+                  type: integer
+                  example: 1001
+
+                location_id:
+                  type: integer
+                  example: 1
+
+                check_in_time:
+                  type: string
+                  format: date-time
+
+                  example: "2025-01-15T08:30:00"
+
+                check_out_time:
+                  type: string
+                  format: date-time
+
+                  example: "2025-01-15T17:30:00"
+
+                status_id:
+                  type: integer
+                  example: 1
+
+      responses:
+        "201":
+          description: Attendance record created successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+  /api/v1/attendance/{id}:
+    put:
+      tags:
+        - Attendance Management
+
+      summary: Update Attendance Record
+      description: |
+        Update existing attendance record.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 5001
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              properties:
+                check_in_time:
+                  type: string
+                  format: date-time
+
+                  example: "2025-01-15T08:30:00"
+
+                check_out_time:
+                  type: string
+                  format: date-time
+
+                  example: "2025-01-15T17:30:00"
+
+                status_id:
+                  type: integer
+                  example: 1
+
+      responses:
+        "200":
+          description: Attendance record updated successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Attendance record not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - Attendance Management
+
+      summary: Delete Attendance Record
+      description: |
+        Delete existing attendance record.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 5001
+
+      responses:
+        "200":
+          description: Attendance record deleted successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Attendance record not found
 
           content:
             application/json:
