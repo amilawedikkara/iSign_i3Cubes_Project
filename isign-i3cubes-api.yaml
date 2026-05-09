@@ -19,6 +19,9 @@ tags:
 
   - name: Service Locations
     description: Service location management APIs
+
+  - name: Employee Management
+    description: Employee management APIs
 paths:
   /api/v1/auth/login:
     post:
@@ -693,6 +696,279 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/employees:
+    get:
+      tags:
+        - Employee Management
+
+      summary: Get Employees List
+      description: |
+        Returns paginated list of employees.
+
+      security:
+        - bearerAuth: []
+
+      responses:
+        "200":
+          description: Employees fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  employees:
+                    type: array
+
+                    items:
+                      type: object
+
+                      properties:
+                        employee_id:
+                          type: integer
+                          example: 1001
+
+                        employee_code:
+                          type: string
+                          example: EMP001
+
+                        full_name:
+                          type: string
+                          example: John Doe
+
+                        designation_id:
+                          type: integer
+                          example: 5
+
+                        location_id:
+                          type: integer
+                          example: 1
+
+                        mobile_number:
+                          type: string
+                          example: "0771234567"
+
+                        status_id:
+                          type: integer
+                          example: 1
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+    post:
+      tags:
+        - Employee Management
+
+      summary: Create Employee
+      description: |
+        Create new employee.
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - employee_code
+                - full_name
+                - designation_id
+                - location_id
+                - status_id
+
+              properties:
+                employee_code:
+                  type: string
+                  example: EMP001
+
+                full_name:
+                  type: string
+                  example: John Doe
+
+                designation_id:
+                  type: integer
+                  example: 5
+
+                location_id:
+                  type: integer
+                  example: 1
+
+                mobile_number:
+                  type: string
+                  example: "0771234567"
+
+                status_id:
+                  type: integer
+                  example: 1
+
+      responses:
+        "201":
+          description: Employee created successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+  /api/v1/employees/{id}:
+    put:
+      tags:
+        - Employee Management
+
+      summary: Update Employee
+      description: |
+        Update existing employee.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 1001
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              properties:
+                full_name:
+                  type: string
+                  example: John Doe
+
+                designation_id:
+                  type: integer
+                  example: 5
+
+                location_id:
+                  type: integer
+                  example: 1
+
+                mobile_number:
+                  type: string
+                  example: "0771234567"
+
+                status_id:
+                  type: integer
+                  example: 1
+
+      responses:
+        "200":
+          description: Employee updated successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Employee not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - Employee Management
+
+      summary: Delete Employee
+      description: |
+        Delete existing employee.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 1001
+
+      responses:
+        "200":
+          description: Employee deleted successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Employee not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
 components:
   securitySchemes:
     bearerAuth:
