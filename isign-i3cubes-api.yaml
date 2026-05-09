@@ -88,13 +88,9 @@ paths:
                         type: string
                         example: admin@isign.lk
 
-                      role:
-                        type: string
-                        enum:
-                          - ADMIN
-                          - EME_MANAGER
-                          - REGIONAL_MANAGER
-                        example: ADMIN
+                      role_id:
+                        type: integer
+                        example: 1
 
         "401":
           description: Invalid username or password
@@ -262,15 +258,9 @@ paths:
                   format: password
                   example: P@ssw0rd123
 
-                role:
-                  type: string
-
-                  enum:
-                    - ADMIN
-                    - EME_MANAGER
-                    - REGIONAL_MANAGER
-
-                  example: EME_MANAGER
+                role_id:
+                  type: integer
+                  example: 1
 
       responses:
         "201":
@@ -330,15 +320,9 @@ paths:
                   type: string
                   example: john@isign.lk
 
-                role:
-                  type: string
-
-                  enum:
-                    - ADMIN
-                    - EME_MANAGER
-                    - REGIONAL_MANAGER
-
-                  example: REGIONAL_MANAGER
+                role_id:
+                  type: integer
+                  example: 1
 
       responses:
         "200":
@@ -447,15 +431,9 @@ paths:
                       type: object
 
                       properties:
-                        role:
-                          type: string
-
-                          enum:
-                            - ADMIN
-                            - EME_MANAGER
-                            - REGIONAL_MANAGER
-
-                          example: ADMIN
+                        role_id:
+                          type: integer
+                          example: 1
 
                         permissions:
                           type: array
@@ -528,12 +506,6 @@ components:
           type: string
           example: admin@isign.lk
 
-        role:
-          type: string
-
-          enum:
-            - ADMIN
-            - EME_MANAGER
-            - REGIONAL_MANAGER
-
-          example: ADMIN
+        role_id:
+          type: integer
+          example: 1
