@@ -21,6 +21,8 @@ tags:
     description: Employee management APIs
   - name: Attendance Management
     description: Attendance management APIs
+  - name: Roster Management
+    description: Employee roster management APIs
 paths:
   /api/v1/auth/login:
     post:
@@ -1255,6 +1257,300 @@ paths:
 
         "404":
           description: Attendance record not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/rosters:
+    get:
+      tags:
+        - Roster Management
+
+      summary: Get Roster List
+      description: |
+        Returns employee roster schedules.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: query
+          name: employee_id
+
+          schema:
+            type: integer
+
+          example: 1001
+
+        - in: query
+          name: location_id
+
+          schema:
+            type: integer
+
+          example: 1
+
+        - in: query
+          name: roster_date
+
+          schema:
+            type: string
+            format: date
+
+          example: 2025-01-15
+
+      responses:
+        "200":
+          description: Roster records fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  rosters:
+                    type: array
+
+                    items:
+                      type: object
+
+                      properties:
+                        roster_id:
+                          type: integer
+                          example: 7001
+
+                        employee_id:
+                          type: integer
+                          example: 1001
+
+                        location_id:
+                          type: integer
+                          example: 1
+
+                        shift_start_time:
+                          type: string
+                          format: date-time
+
+                          example: "2025-01-15T08:00:00"
+
+                        shift_end_time:
+                          type: string
+                          format: date-time
+
+                          example: "2025-01-15T17:00:00"
+
+                        status_id:
+                          type: integer
+                          example: 1
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+    post:
+      tags:
+        - Roster Management
+
+      summary: Create Roster
+      description: |
+        Create employee roster schedule.
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - employee_id
+                - location_id
+                - shift_start_time
+                - shift_end_time
+                - status_id
+
+              properties:
+                employee_id:
+                  type: integer
+                  example: 1001
+
+                location_id:
+                  type: integer
+                  example: 1
+
+                shift_start_time:
+                  type: string
+                  format: date-time
+
+                  example: "2025-01-15T08:00:00"
+
+                shift_end_time:
+                  type: string
+                  format: date-time
+
+                  example: "2025-01-15T17:00:00"
+
+                status_id:
+                  type: integer
+                  example: 1
+
+      responses:
+        "201":
+          description: Roster created successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+  /api/v1/rosters/{id}:
+    put:
+      tags:
+        - Roster Management
+
+      summary: Update Roster
+      description: |
+        Update employee roster schedule.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 7001
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              properties:
+                shift_start_time:
+                  type: string
+                  format: date-time
+
+                  example: "2025-01-15T08:00:00"
+
+                shift_end_time:
+                  type: string
+                  format: date-time
+
+                  example: "2025-01-15T17:00:00"
+
+                status_id:
+                  type: integer
+                  example: 1
+
+      responses:
+        "200":
+          description: Roster updated successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Roster not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      tags:
+        - Roster Management
+
+      summary: Delete Roster
+      description: |
+        Delete employee roster schedule.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 7001
+
+      responses:
+        "200":
+          description: Roster deleted successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Roster not found
 
           content:
             application/json:
