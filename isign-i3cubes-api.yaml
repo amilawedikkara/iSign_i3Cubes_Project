@@ -15,6 +15,8 @@ tags:
     description: User authentication APIs
   - name: User Management
     description: Admin portal user management APIs
+  - name: Role Management
+    description: Role and permission management APIs
   - name: Service Locations
     description: Service location management APIs
   - name: Employee Management
@@ -182,6 +184,65 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ForbiddenResponse"
+  /api/v1/device-auth:
+    post:
+      tags:
+        - Device Registration
+
+      summary: Authenticate Registered Device
+      description: |
+        Authenticate registered location device and return device session token.
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - device_uuid
+                - location_code
+
+              properties:
+                device_uuid:
+                  type: string
+                  example: "A1B2-C3D4-E5F6"
+
+                location_code:
+                  type: string
+                  example: COL-7788
+
+      responses:
+        "200":
+          description: Device authenticated successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  device_token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiIsInR5cCI...
+
+                  location_id:
+                    type: integer
+                    example: 1
+
+        "401":
+          description: Invalid device authentication
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /api/v1/users:
     get:
       tags:
@@ -251,7 +312,7 @@ paths:
                 - fullName
                 - email
                 - password
-                - role
+                - role_id
 
               properties:
                 fullName:
@@ -410,7 +471,7 @@ paths:
   /api/v1/roles:
     get:
       tags:
-        - User Management
+        - Role Management
 
       summary: Get Roles List
       description: |
@@ -443,6 +504,9 @@ paths:
                         role_id:
                           type: integer
                           example: 1
+                        role_name:
+                          type: string
+                          example: Administrator
 
                         permissions:
                           type: array
@@ -470,6 +534,189 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ForbiddenResponse"
+
+    post:
+      tags:
+        - Role Management
+
+      summary: Create Role
+
+      description: |
+        Create new system role and assign permissions.
+
+      security:
+        - bearerAuth: []
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - role_name
+                - permissions
+
+              properties:
+                role_name:
+                  type: string
+                  example: Regional Manager
+
+                permissions:
+                  type: array
+
+                  items:
+                    type: string
+
+                  example:
+                    - VIEW_ATTENDANCE
+                    - MANAGE_EMPLOYEES
+                    - MANAGE_ROSTERS
+
+      responses:
+        "201":
+          description: Role created successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+  /api/v1/roles/{id}:
+    put:
+      tags:
+        - Role Management
+
+      summary: Update Role
+
+      description: |
+        Update existing role and permissions.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 1
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              properties:
+                role_name:
+                  type: string
+                  example: Regional Manager
+
+                permissions:
+                  type: array
+
+                  items:
+                    type: string
+
+                  example:
+                    - VIEW_ATTENDANCE
+                    - EDIT_ATTENDANCE
+
+      responses:
+        "200":
+          description: Role updated successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Role not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+    delete:
+      tags:
+        - Role Management
+
+      summary: Delete Role
+
+      description: |
+        Delete existing system role.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 1
+
+      responses:
+        "200":
+          description: Role deleted successfully
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Role not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /api/v1/locations:
     get:
       tags:
@@ -1595,7 +1842,7 @@ paths:
                           type: integer
                           example: 9001
 
-                        employee_id:
+                        location_id:
                           type: integer
                           example: 1001
 
@@ -1638,9 +1885,6 @@ paths:
       description: |
         Register mobile device for employee attendance usage.
 
-      security:
-        - bearerAuth: []
-
       requestBody:
         required: true
 
@@ -1650,14 +1894,15 @@ paths:
               type: object
 
               required:
-                - employee_id
+                - location_id
+                - location_code
+                - sms_otp
                 - device_uuid
                 - device_model
                 - platform
-                - status_id
 
               properties:
-                employee_id:
+                location_id:
                   type: integer
                   example: 1001
 
@@ -1676,6 +1921,13 @@ paths:
                 status_id:
                   type: integer
                   example: 1
+                location_code:
+                  type: string
+                  example: COL-7788
+
+                sms_otp:
+                  type: string
+                  example: "884422"
 
       responses:
         "201":
