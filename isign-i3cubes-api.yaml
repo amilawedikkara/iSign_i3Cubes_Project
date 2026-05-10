@@ -1516,9 +1516,9 @@ paths:
 
           schema:
             type: integer
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-          example: 5001
 
+          example: 5001
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Attendance record deleted successfully
