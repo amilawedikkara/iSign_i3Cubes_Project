@@ -5,6 +5,10 @@ info:
   version: 1.0.0
   description: |
     API documentation for the iSign i3Cubes Attendance Management System.
+    Supported Languages:
+    - English
+    - Sinhala
+    - Tamil
 
 servers:
   - url: https://api.isign.i3cubes.com
@@ -41,7 +45,8 @@ paths:
         - Administrator
         - EME Area Manager
         - Regional Manager
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
         content:
@@ -118,6 +123,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+
   /api/v1/auth/me:
     get:
       tags:
@@ -129,7 +135,8 @@ paths:
 
       security:
         - bearerAuth: []
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: User details fetched successfully
@@ -192,7 +199,8 @@ paths:
       summary: Authenticate Registered Device
       description: |
         Authenticate registered location device and return device session token.
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -255,6 +263,9 @@ paths:
       security:
         - bearerAuth: []
 
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
       responses:
         "200":
           description: Users fetched successfully
@@ -299,6 +310,9 @@ paths:
 
       security:
         - bearerAuth: []
+
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
 
       requestBody:
         required: true
@@ -372,6 +386,7 @@ paths:
             type: integer
 
           example: 101
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
 
       requestBody:
         required: true
@@ -441,6 +456,8 @@ paths:
 
           example: 101
 
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
       responses:
         "200":
           description: User deleted successfully
@@ -479,7 +496,8 @@ paths:
 
       security:
         - bearerAuth: []
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Roles fetched successfully
@@ -546,7 +564,8 @@ paths:
 
       security:
         - bearerAuth: []
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -616,6 +635,8 @@ paths:
             type: integer
 
           example: 1
+
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
 
       requestBody:
         required: true
@@ -690,6 +711,7 @@ paths:
 
           example: 1
 
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Role deleted successfully
@@ -728,7 +750,8 @@ paths:
 
       security:
         - bearerAuth: []
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Locations fetched successfully
@@ -792,6 +815,9 @@ paths:
       security:
         - bearerAuth: []
 
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
       requestBody:
         required: true
 
@@ -854,6 +880,7 @@ paths:
 
           example: 1
 
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -919,6 +946,7 @@ paths:
 
           example: 1
 
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Location deleted successfully
@@ -957,7 +985,8 @@ paths:
 
       security:
         - bearerAuth: []
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Employees fetched successfully
@@ -1032,7 +1061,8 @@ paths:
 
       security:
         - bearerAuth: []
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -1113,7 +1143,7 @@ paths:
             type: integer
 
           example: 1001
-
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -1191,6 +1221,7 @@ paths:
 
           example: 1001
 
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Employee deleted successfully
@@ -1255,6 +1286,8 @@ paths:
             format: date
 
           example: 2025-01-15
+
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
 
       responses:
         "200":
@@ -1330,7 +1363,8 @@ paths:
 
       security:
         - bearerAuth: []
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -1411,6 +1445,7 @@ paths:
 
           example: 5001
 
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -1481,7 +1516,7 @@ paths:
 
           schema:
             type: integer
-
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
           example: 5001
 
       responses:
@@ -1549,6 +1584,7 @@ paths:
 
           example: 2025-01-15
 
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Roster records fetched successfully
@@ -1623,7 +1659,8 @@ paths:
 
       security:
         - bearerAuth: []
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -1705,6 +1742,7 @@ paths:
 
           example: 7001
 
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -1778,6 +1816,7 @@ paths:
 
           example: 7001
 
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Roster deleted successfully
@@ -1816,7 +1855,8 @@ paths:
 
       security:
         - bearerAuth: []
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Devices fetched successfully
@@ -1884,7 +1924,8 @@ paths:
       summary: Register Device
       description: |
         Register mobile device for employee attendance usage.
-
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -1969,7 +2010,7 @@ paths:
             type: integer
 
           example: 9001
-
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
         required: true
 
@@ -2039,6 +2080,7 @@ paths:
 
           example: 9001
 
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
           description: Device deleted successfully
@@ -2114,3 +2156,25 @@ components:
         role_id:
           type: integer
           example: 1
+  parameters:
+    AcceptLanguageHeader:
+      in: header
+      name: Accept-Language
+      required: false
+
+      schema:
+        type: string
+        enum:
+          - en
+          - si
+          - ta
+
+        default: en
+
+      description: |
+        Preferred response language.
+
+        Supported values:
+        - en = English
+        - si = Sinhala
+        - ta = Tamil
