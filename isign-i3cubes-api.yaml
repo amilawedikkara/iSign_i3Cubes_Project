@@ -1046,6 +1046,26 @@ paths:
                         status_id:
                           type: integer
                           example: 1
+                        secret_code_enabled:
+                          type: boolean
+                          nullable: true
+                          example: true
+
+                        face_enrolled:
+                          type: boolean
+                          nullable: true
+                          example: false
+
+                        biometric_status:
+                          type: string
+                          nullable: true
+                          example: PENDING
+
+                        verification_required:
+                          type: boolean
+                          nullable: true
+                          example: true
+                        
 
         "401":
           description: Unauthorized
@@ -2471,7 +2491,7 @@ paths:
         required: true
 
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
 
@@ -2481,24 +2501,19 @@ paths:
               properties:
                 image:
                   type: string
-                  format: byte
-                  example: "base64-encoded-image"
+                  format: binary
+                  description: Live selfie image file
 
-                capture_metadata:
-                  type: object
+                captured_at:
+                  type: string
+                  format: date-time
 
-                  properties:
-                    captured_at:
-                      type: string
-                      format: date-time
+                  example: "2026-05-21T08:30:00Z"
 
-                      example: "2026-05-21T08:30:00Z"
+                camera_source:
+                  type: string
 
-                    camera_source:
-                      type: string
-
-                      example: FRONT_CAMERA
-
+                  example: FRONT_CAMERA
       responses:
         "200":
           description: Selfie verification completed successfully
@@ -2806,6 +2821,161 @@ paths:
 
         "404":
           description: Verification session not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/biometrics/face-enrollment:
+    post:
+      tags:
+        - Biometrics
+
+      summary: Enroll Employee Face Reference
+
+      description: |
+        Register employee face reference image for:
+        - attendance face verification
+        - liveness validation support
+        - future biometric verification workflows
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      requestBody:
+        required: true
+
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+
+              required:
+                - employee_id
+                - image
+
+              properties:
+                employee_id:
+                  type: integer
+                  example: 1001
+
+                image:
+                  type: string
+                  format: binary
+                  description: Face reference image file
+
+      responses:
+        "201":
+          description: Face enrollment completed successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  enrollment_completed:
+                    type: boolean
+                    example: true
+
+                  employee_id:
+                    type: integer
+                    example: 1001
+
+                  quality_score:
+                    type: number
+                    format: float
+                    example: 0.93
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Face enrollment failed
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+  /api/v1/biometrics/face-enrollment/{employee_id}:
+    get:
+      tags:
+        - Biometrics
+
+      summary: Get Employee Face Enrollment Status
+
+      description: |
+        Returns employee biometric enrollment status and enrollment metadata.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: employee_id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 1001
+
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      responses:
+        "200":
+          description: Face enrollment status fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  employee_id:
+                    type: integer
+                    example: 1001
+
+                  enrolled:
+                    type: boolean
+                    example: true
+
+                  biometric_status:
+                    type: string
+                    example: ACTIVE
+
+                  last_updated:
+                    type: string
+                    format: date-time
+                    example: "2026-05-21T08:30:00Z"
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "404":
+          description: Employee biometric enrollment not found
 
           content:
             application/json:
