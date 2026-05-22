@@ -208,8 +208,19 @@ paths:
         - Device Registration
 
       summary: Authenticate Registered Device
+
       description: |
-        Authenticate registered location device and return device session token.
+        Authenticate registered service location device and return device session token.
+
+        Device Authentication Flow:
+        1. Device is registered to a service location using SMS verification.
+        2. Mobile app securely stores the returned device token.
+        3. On every app launch, the app automatically authenticates using the registered device information.
+        4. If device authentication succeeds, the app opens directly to the main operational screen.
+        5. If device authentication fails or device registration is removed, the app returns to the registration flow.
+        6. Mobile users never log in using username/password authentication.
+
+        This endpoint supports the trusted shared terminal architecture used by service locations.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
@@ -1065,7 +1076,6 @@ paths:
                           type: boolean
                           nullable: true
                           example: true
-                        
 
         "401":
           description: Unauthorized
@@ -2103,8 +2113,21 @@ paths:
         - Device Registration
 
       summary: Register Device
+
       description: |
-        Register mobile device for employee attendance usage.
+        Register mobile device for trusted service location attendance usage.
+
+        Device Registration Rules:
+        1. One service location can only have one active registered device.
+        2. Device registration is verified using service location code and SMS OTP validation.
+        3. Mobile users do not use username/password authentication.
+        4. If the device is already registered to another service location:
+          - the previous location assignment is automatically removed
+          - the device is reassigned to the new service location
+          - the reassignment event is recorded in the audit trail
+        5. If another active device already exists at the target location, registration is denied until the previous device is removed.
+
+        This endpoint supports the trusted shared terminal architecture used by service locations.
       parameters:
         - $ref: "#/components/parameters/AcceptLanguageHeader"
       requestBody:
@@ -2289,6 +2312,209 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/devices/employees:
+    get:
+      tags:
+        - Device Registration
+
+      summary: Get Employees Allocated to Device Location
+
+      description: |
+        Returns employees allocated to the authenticated device's registered service location.
+
+        This endpoint is intended for:
+        - mobile trusted terminal usage
+        - attendance employee selection
+        - location-scoped employee visibility
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      responses:
+        "200":
+          description: Allocated employees fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  location_id:
+                    type: integer
+                    example: 1
+
+                  employees:
+                    type: array
+
+                    items:
+                      type: object
+
+                      properties:
+                        employee_id:
+                          type: integer
+                          example: 1001
+
+                        employee_code:
+                          type: string
+                          example: EMP001
+
+                        full_name:
+                          type: string
+                          example: Kasun Perera
+
+                        designation:
+                          type: string
+                          example: Paramedic
+
+                        verification_required:
+                          type: boolean
+                          example: true
+
+                        face_enrolled:
+                          type: boolean
+                          example: true
+
+        "401":
+          description: Unauthorized device authentication
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Device not registered or inactive
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+  /api/v1/devices/rosters:
+    get:
+      tags:
+        - Device Registration
+
+      summary: Get Active Rosters for Device Location
+
+      description: |
+        Returns employee roster schedules for the authenticated device's registered service location.
+
+        Intended for:
+        - mobile trusted terminal roster view
+        - today's roster
+        - upcoming weekly roster visibility
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: query
+          name: start_date
+
+          schema:
+            type: string
+            format: date
+
+          example: 2026-05-22
+
+          required: false
+
+          description: Start date for roster range. Defaults to current date.
+
+        - in: query
+          name: end_date
+
+          schema:
+            type: string
+            format: date
+
+          example: 2026-05-29
+
+          required: false
+
+          description: End date for roster range. Defaults to current date + 7 days.
+
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      responses:
+        "200":
+          description: Rosters fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  location_id:
+                    type: integer
+                    example: 1
+
+                  rosters:
+                    type: array
+
+                    items:
+                      type: object
+
+                      properties:
+                        roster_date:
+                          type: string
+                          format: date
+
+                          example: 2026-05-22
+
+                        employee_id:
+                          type: integer
+                          example: 1001
+
+                        employee_name:
+                          type: string
+                          example: Kasun Perera
+
+                        designation:
+                          type: string
+                          example: Paramedic
+
+                        shift_start_time:
+                          type: string
+                          format: date-time
+
+                          example: "2026-05-22T08:00:00Z"
+
+                        shift_end_time:
+                          type: string
+                          format: date-time
+
+                          example: "2026-05-22T20:00:00Z"
+
+        "401":
+          description: Unauthorized device authentication
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Device not registered or inactive
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
   /api/v1/verification/sessions/start:
     post:
       tags:
