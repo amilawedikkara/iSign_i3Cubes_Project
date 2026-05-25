@@ -1619,6 +1619,20 @@ paths:
                 verification_session_id:
                   type: string
                   example: "550e8400-e29b-41d4-a716-446655440000"
+                latitude:
+                  type: number
+                  format: float
+                  example: 6.9271
+
+                longitude:
+                  type: number
+                  format: float
+                  example: 79.8612
+
+                record_time:
+                  type: string
+                  format: date-time
+                  example: "2026-05-21T08:30:00Z"
 
       responses:
         "201":
@@ -1694,7 +1708,20 @@ paths:
                 verification_session_id:
                   type: string
                   example: "550e8400-e29b-41d4-a716-446655440000"
+                latitude:
+                  type: number
+                  format: float
+                  example: 6.9271
 
+                longitude:
+                  type: number
+                  format: float
+                  example: 79.8612
+
+                record_time:
+                  type: string
+                  format: date-time
+                  example: "2026-05-21T08:30:00Z"
       responses:
         "201":
           description: Verified check-out created successfully
