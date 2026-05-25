@@ -107,7 +107,7 @@ paths:
                         type: integer
                         example: 101
 
-                      fullName:
+                      user_name:
                         type: string
                         example: John Doe
 
@@ -345,13 +345,13 @@ paths:
               type: object
 
               required:
-                - fullName
+                - user_name
                 - email
                 - password
                 - role_id
 
               properties:
-                fullName:
+                user_name:
                   type: string
                   example: John Doe
 
@@ -419,7 +419,7 @@ paths:
               type: object
 
               properties:
-                fullName:
+                user_name:
                   type: string
                   example: John Doe
 
@@ -3245,7 +3245,7 @@ components:
           type: integer
           example: 101
 
-        fullName:
+        user_name:
           type: string
           example: John Doe
 
