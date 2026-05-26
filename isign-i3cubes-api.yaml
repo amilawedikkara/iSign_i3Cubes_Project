@@ -279,7 +279,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  
+
   /api/v1/device-auth:
     post:
       tags:
@@ -839,19 +839,106 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/regions:
+    get:
+      tags:
+        - Service Locations
+
+      summary: Get Regions List
+
+      description: |
+        Returns available operational regions for dropdown selection.
+
+        UI Usage:
+        - Used as the first-level filter before selecting service locations.
+        - Frontend should load locations using GET /api/v1/locations?region_id={region_id} after a region is selected.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      responses:
+        "200":
+          description: Regions fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  regions:
+                    type: array
+
+                    items:
+                      type: object
+
+                      properties:
+                        region_id:
+                          type: integer
+                          example: 10
+
+                        region_name:
+                          type: string
+                          example: Western Province
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
   /api/v1/locations:
     get:
       tags:
         - Service Locations
 
       summary: Get Service Locations
+
       description: |
         Returns available service locations.
 
+        UI Usage:
+        - Used for location dropdown selection.
+        - Supports optional filtering by region_id.
+        - Frontend should first load regions using GET /api/v1/regions.
       security:
         - bearerAuth: []
+
       parameters:
+        - in: query
+          name: region_id
+
+          schema:
+            type: integer
+
+          required: false
+
+          example: 10
+
+          description: |
+            Optional region filter.
+            Used for dependent location dropdown filtering.
+
         - $ref: "#/components/parameters/AcceptLanguageHeader"
+
       responses:
         "200":
           description: Locations fetched successfully
@@ -1074,6 +1161,71 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/designations:
+    get:
+      tags:
+        - Employee Management
+
+      summary: Get Designations List
+
+      description: |
+        Returns available employee designations for dropdown selection.
+
+        UI Usage:
+        - Used in employee create/update forms.
+        - Used for employee filtering and reporting.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      responses:
+        "200":
+          description: Designations fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  designations:
+                    type: array
+
+                    items:
+                      type: object
+
+                      properties:
+                        designation_id:
+                          type: integer
+                          example: 5
+
+                        designation_name:
+                          type: string
+                          example: Paramedic
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
   /api/v1/employees:
     get:
       tags:
@@ -1685,7 +1837,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"                             
+                $ref: "#/components/schemas/ErrorResponse"
   /api/v1/attendance:
     get:
       tags:
@@ -2271,6 +2423,72 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ForbiddenResponse"
+  /api/v1/statuses:
+    get:
+      tags:
+        - Employee Management
+
+      summary: Get Status List
+
+      description: |
+        Returns available system statuses for dropdown selection.
+
+        UI Usage:
+        - Used in employee management
+        - Used in device management
+        - Used in roster and attendance filtering
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      responses:
+        "200":
+          description: Statuses fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  statuses:
+                    type: array
+
+                    items:
+                      type: object
+
+                      properties:
+                        status_id:
+                          type: integer
+                          example: 1
+
+                        status_name:
+                          type: string
+                          example: ACTIVE
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Forbidden
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
   /api/v1/rosters:
     get:
       tags:
