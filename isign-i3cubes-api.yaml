@@ -202,6 +202,84 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ForbiddenResponse"
+  /api/v1/devices/request-otp:
+    post:
+      tags:
+        - Device Registration
+
+      summary: Request Device Registration SMS OTP
+
+      description: |
+        Request SMS OTP for registering a mobile device to a service location.
+
+        This endpoint starts the trusted terminal registration flow:
+        1. Mobile app submits service location code and device UUID.
+        2. Backend validates the service location code.
+        3. Backend sends SMS OTP to the configured service location contact.
+        4. Mobile app uses the received OTP in POST /api/v1/devices.
+
+      parameters:
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - location_code
+                - device_uuid
+
+              properties:
+                location_code:
+                  type: string
+                  example: COL-7788
+
+                device_uuid:
+                  type: string
+                  example: "A1B2-C3D4-E5F6"
+
+      responses:
+        "200":
+          description: SMS OTP sent successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  message:
+                    type: string
+                    example: SMS OTP sent successfully
+
+                  expires_in:
+                    type: integer
+                    example: 300
+
+        "400":
+          description: Invalid location code or device UUID
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "429":
+          description: Too many OTP requests
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  
   /api/v1/device-auth:
     post:
       tags:
@@ -1290,6 +1368,324 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/employees/{id}/assignments/temporary:
+    post:
+      tags:
+        - Employee Management
+
+      summary: Create Temporary Employee Assignment
+
+      description: |
+        Temporarily assign an employee to another service location.
+
+        Assignment Rules:
+        1. Employee remains assigned until assignment_end_time.
+        2. Assignment automatically expires after the configured end time.
+        3. Original employee location assignment is restored after expiration.
+        4. Assignment activity is recorded in the audit trail.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 1001
+
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - temporary_location_id
+                - assignment_start_time
+                - assignment_end_time
+
+              properties:
+                temporary_location_id:
+                  type: integer
+                  example: 5
+
+                assignment_start_time:
+                  type: string
+                  format: date-time
+                  example: "2026-05-22T08:00:00Z"
+
+                assignment_end_time:
+                  type: string
+                  format: date-time
+                  example: "2026-05-29T20:00:00Z"
+
+                assignment_reason:
+                  type: string
+                  example: Temporary staffing shortage coverage
+
+      responses:
+        "201":
+          description: Temporary assignment created successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  employee_id:
+                    type: integer
+                    example: 1001
+
+                  temporary_location_id:
+                    type: integer
+                    example: 5
+
+                  assignment_active:
+                    type: boolean
+                    example: true
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Insufficient permission for employee assignment
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Employee or location not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /api/v1/employees/{id}/assignments/permanent:
+    post:
+      tags:
+        - Employee Management
+
+      summary: Create Permanent Employee Assignment
+
+      description: |
+        Permanently transfer an employee to another service location.
+
+        Assignment Rules:
+        1. Employee primary location assignment is updated permanently.
+        2. Previous location assignment is released.
+        3. Assignment activity is recorded in the audit trail.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 1001
+
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - new_location_id
+
+              properties:
+                new_location_id:
+                  type: integer
+                  example: 5
+
+                assignment_reason:
+                  type: string
+                  example: Permanent transfer to regional office
+
+      responses:
+        "200":
+          description: Permanent assignment completed successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  employee_id:
+                    type: integer
+                    example: 1001
+
+                  new_location_id:
+                    type: integer
+                    example: 5
+
+                  assignment_type:
+                    type: string
+                    example: PERMANENT
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Insufficient permission for employee assignment
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Employee or location not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/employees/{id}/assignments:
+    get:
+      tags:
+        - Employee Management
+
+      summary: Get Employee Assignment History
+
+      description: |
+        Returns permanent and temporary assignment history for an employee.
+
+        Includes:
+        - assignment type
+        - assigned locations
+        - assignment period
+        - assignment status
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 1001
+
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      responses:
+        "200":
+          description: Assignment history fetched successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  employee_id:
+                    type: integer
+                    example: 1001
+
+                  assignments:
+                    type: array
+
+                    items:
+                      type: object
+
+                      properties:
+                        assignment_type:
+                          type: string
+                          example: TEMPORARY
+
+                        from_location_id:
+                          type: integer
+                          example: 1
+
+                        to_location_id:
+                          type: integer
+                          example: 5
+
+                        assignment_start_time:
+                          type: string
+                          format: date-time
+                          example: "2026-05-22T08:00:00Z"
+
+                        assignment_end_time:
+                          type: string
+                          format: date-time
+                          nullable: true
+                          example: "2026-05-29T20:00:00Z"
+
+                        assignment_status:
+                          type: string
+                          example: ACTIVE
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Insufficient permission to view assignment history
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Employee not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"                             
   /api/v1/attendance:
     get:
       tags:
@@ -1587,6 +1983,117 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /api/v1/attendance/{id}/correction:
+    post:
+      tags:
+        - Attendance Management
+
+      summary: Submit Attendance Correction
+
+      description: |
+        Submit one-time attendance correction for an employee attendance record.
+
+        Correction Rules:
+        1. Only authorized EME or Administrator users can perform corrections.
+        2. Attendance records can only be corrected once.
+        3. All corrections are permanently recorded in the audit trail.
+        4. Original attendance values are preserved for compliance review.
+
+      security:
+        - bearerAuth: []
+
+      parameters:
+        - in: path
+          name: id
+          required: true
+
+          schema:
+            type: integer
+
+          example: 5001
+
+        - $ref: "#/components/parameters/AcceptLanguageHeader"
+
+      requestBody:
+        required: true
+
+        content:
+          application/json:
+            schema:
+              type: object
+
+              required:
+                - correction_reason
+
+              properties:
+                corrected_check_in_time:
+                  type: string
+                  format: date-time
+                  example: "2026-05-22T08:30:00Z"
+
+                corrected_check_out_time:
+                  type: string
+                  format: date-time
+                  example: "2026-05-22T17:30:00Z"
+
+                correction_reason:
+                  type: string
+                  example: Employee forgot to complete check-out
+
+      responses:
+        "200":
+          description: Attendance correction completed successfully
+
+          content:
+            application/json:
+              schema:
+                type: object
+
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+
+                  correction_applied:
+                    type: boolean
+                    example: true
+
+                  correction_count:
+                    type: integer
+                    example: 1
+
+        "400":
+          description: Attendance record already corrected
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "401":
+          description: Unauthorized
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+        "403":
+          description: Insufficient permission for attendance correction
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ForbiddenResponse"
+
+        "404":
+          description: Attendance record not found
+
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /api/v1/attendance/verified-check-in:
     post:
       tags:
