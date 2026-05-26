@@ -1237,7 +1237,60 @@ paths:
 
       security:
         - bearerAuth: []
+
       parameters:
+        - in: query
+          name: location_id
+
+          schema:
+            type: integer
+
+          required: false
+
+          example: 1
+
+          description: |
+            Filter employees by assigned service location.
+
+        - in: query
+          name: designation_id
+
+          schema:
+            type: integer
+
+          required: false
+
+          example: 5
+
+          description: |
+            Filter employees by designation.
+
+        - in: query
+          name: status_id
+
+          schema:
+            type: integer
+
+          required: false
+
+          example: 1
+
+          description: |
+            Filter employees by employee status.
+
+        - in: query
+          name: search
+
+          schema:
+            type: string
+
+          required: false
+
+          example: John
+
+          description: |
+            Search employees by employee code or full name.
+
         - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
@@ -1875,6 +1928,52 @@ paths:
             format: date
 
           example: 2025-01-15
+
+        - in: query
+          name: start_date
+
+          schema:
+            type: string
+            format: date
+
+          required: false
+
+          example: 2026-05-01
+
+          description: |
+            Filter attendance records from this date.
+
+        - in: query
+          name: end_date
+
+          schema:
+            type: string
+            format: date
+
+          required: false
+
+          example: 2026-05-31
+
+          description: |
+            Filter attendance records up to this date.
+
+        - in: query
+          name: verification_status
+
+          schema:
+            type: string
+
+            enum:
+              - VERIFIED
+              - PENDING
+              - FAILED
+
+          required: false
+
+          example: VERIFIED
+
+          description: |
+            Filter attendance records by verification outcome.
 
         - $ref: "#/components/parameters/AcceptLanguageHeader"
 
@@ -2798,7 +2897,34 @@ paths:
 
       security:
         - bearerAuth: []
+      
       parameters:
+        - in: query
+          name: location_id
+
+          schema:
+            type: integer
+
+          required: false
+
+          example: 1
+
+          description: |
+            Filter devices by assigned service location.
+
+        - in: query
+          name: status_id
+
+          schema:
+            type: integer
+
+          required: false
+
+          example: 1
+
+          description: |
+            Filter devices by device status.
+
         - $ref: "#/components/parameters/AcceptLanguageHeader"
       responses:
         "200":
