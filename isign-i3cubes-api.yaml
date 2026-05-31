@@ -2004,7 +2004,7 @@ paths:
 
                           example:
                             - 5
-    - 8
+                            - 8
 
                         assignment_start_time:
                           type: string
