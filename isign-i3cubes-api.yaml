@@ -968,6 +968,23 @@ paths:
                           type: string
                           example: Colombo Central
 
+                        location_code:
+                          type: string
+                          example: COL-7788
+                          description: Unique service location code provided by the customer.
+
+                        latitude:
+                          type: number
+                          format: double
+                          example: 6.9271
+                          description: Service location latitude used for GPS boundary validation.
+
+                        longitude:
+                          type: number
+                          format: double
+                          example: 79.8612
+                          description: Service location longitude used for GPS boundary validation.
+
                         region_id:
                           type: integer
                           example: 10
@@ -996,8 +1013,14 @@ paths:
         - Service Locations
 
       summary: Create Service Location
+     
       description: |
         Create new service location.
+
+        Location Rules:
+        - location_code is provided by the customer and must be unique.
+        - latitude and longitude are required for GPS boundary validation.
+        - Only authorized admin users can create service locations.
 
       security:
         - bearerAuth: []
@@ -1015,16 +1038,36 @@ paths:
 
               required:
                 - location_name
+                - location_code
                 - region_id
+                - latitude
+                - longitude
 
               properties:
                 location_name:
                   type: string
                   example: Colombo Central
 
+                location_code:
+                  type: string
+                  example: COL-7788
+                  description: Unique service location code provided by the customer. This code is used for mobile device registration and must be unique across all locations.
+
                 region_id:
                   type: integer
                   example: 10
+
+                latitude:
+                  type: number
+                  format: double
+                  example: 6.9271
+                  description: Service location latitude used for GPS boundary validation.
+
+                longitude:
+                  type: number
+                  format: double
+                  example: 79.8612
+                  description: Service location longitude used for GPS boundary validation.
 
       responses:
         "201":
@@ -1051,8 +1094,14 @@ paths:
         - Service Locations
 
       summary: Update Service Location
+      
       description: |
         Update existing service location.
+
+        Update Rules:
+        - location_code must remain unique across all service locations.
+        - latitude and longitude updates affect GPS boundary validation.
+        - Only authorized admin users can update service location code and GPS coordinates.
 
       security:
         - bearerAuth: []
@@ -1081,9 +1130,26 @@ paths:
                   type: string
                   example: Colombo Central
 
+                location_code:
+                  type: string
+                  example: COL-7788
+                  description: Unique service location code provided by the customer. Editable by authorized admin users only.
+
                 region_id:
                   type: integer
                   example: 10
+
+                latitude:
+                  type: number
+                  format: double
+                  example: 6.9271
+                  description: Service location latitude used for GPS boundary validation.
+
+                longitude:
+                  type: number
+                  format: double
+                  example: 79.8612
+                  description: Service location longitude used for GPS boundary validation.
 
       responses:
         "200":
