@@ -1013,7 +1013,7 @@ paths:
         - Service Locations
 
       summary: Create Service Location
-     
+
       description: |
         Create new service location.
 
@@ -1094,7 +1094,7 @@ paths:
         - Service Locations
 
       summary: Update Service Location
-      
+
       description: |
         Update existing service location.
 
@@ -1391,9 +1391,27 @@ paths:
                           type: string
                           example: John Doe
 
-                        designation_id:
-                          type: integer
-                          example: 5
+                        permanent_location_ids:
+                          type: array
+                          description: Permanent service locations assigned to the employee.
+
+                          items:
+                            type: integer
+
+                          example:
+                            - 1
+                            - 5
+
+                        temporary_location_ids:
+                          type: array
+                          description: Active temporary service locations assigned to the employee.
+
+                          items:
+                            type: integer
+
+                          example:
+                            - 8
+                            - 12
 
                         location_id:
                           type: integer
@@ -1474,7 +1492,7 @@ paths:
                 - employee_code
                 - full_name
                 - designation_id
-                - location_id
+                - permanent_location_ids
                 - status_id
 
               properties:
@@ -1490,9 +1508,16 @@ paths:
                   type: integer
                   example: 5
 
-                location_id:
-                  type: integer
-                  example: 1
+                permanent_location_ids:
+                  type: array
+                  description: Permanent service locations assigned to the employee.
+
+                  items:
+                    type: integer
+
+                  example:
+                    - 1
+                    - 5
 
                 mobile_number:
                   type: string
@@ -1560,9 +1585,16 @@ paths:
                   type: integer
                   example: 5
 
-                location_id:
-                  type: integer
-                  example: 1
+                permanent_location_ids:
+                  type: array
+                  description: Permanent service locations assigned to the employee.
+
+                  items:
+                    type: integer
+
+                  example:
+                    - 1
+                    - 5
 
                 mobile_number:
                   type: string
@@ -1656,12 +1688,12 @@ paths:
       summary: Create Temporary Employee Assignment
 
       description: |
-        Temporarily assign an employee to another service location.
+        Temporarily assign an employee to one or more service locations.
 
         Assignment Rules:
         1. Employee remains assigned until assignment_end_time.
         2. Assignment automatically expires after the configured end time.
-        3. Original employee location assignment is restored after expiration.
+        3. Temporary location assignments automatically expire after the configured end time.
         4. Assignment activity is recorded in the audit trail.
 
       security:
@@ -1688,14 +1720,22 @@ paths:
               type: object
 
               required:
-                - temporary_location_id
+                - temporary_location_ids
                 - assignment_start_time
                 - assignment_end_time
 
               properties:
-                temporary_location_id:
-                  type: integer
-                  example: 5
+                temporary_location_ids:
+                  type: array
+                  description: Multiple temporary service locations assigned to the employee.
+
+                  items:
+                    type: integer
+
+                  example:
+                    - 5
+                    - 8
+                    - 12
 
                 assignment_start_time:
                   type: string
@@ -1729,9 +1769,17 @@ paths:
                     type: integer
                     example: 1001
 
-                  temporary_location_id:
-                    type: integer
-                    example: 5
+                  temporary_location_ids:
+                    type: array
+                    description: Multiple temporary service locations assigned to the employee.
+
+                    items:
+                      type: integer
+
+                    example:
+                      - 5
+                      - 8
+                      - 12
 
                   assignment_active:
                     type: boolean
@@ -1769,7 +1817,7 @@ paths:
       summary: Create Permanent Employee Assignment
 
       description: |
-        Permanently transfer an employee to another service location.
+        Permanently assign an employee to one or more service locations.
 
         Assignment Rules:
         1. Employee primary location assignment is updated permanently.
@@ -1800,12 +1848,20 @@ paths:
               type: object
 
               required:
-                - new_location_id
+                - permanent_location_ids
 
               properties:
-                new_location_id:
-                  type: integer
-                  example: 5
+                permanent_location_ids:
+                  type: array
+                  description: Multiple permanent service locations assigned to the employee.
+
+                  items:
+                    type: integer
+
+                  example:
+                    - 1
+                    - 5
+                    - 8
 
                 assignment_reason:
                   type: string
@@ -1829,9 +1885,17 @@ paths:
                     type: integer
                     example: 1001
 
-                  new_location_id:
-                    type: integer
-                    example: 5
+                  permanent_location_ids:
+                    type: array
+                    description: Multiple permanent service locations assigned to the employee.
+
+                    items:
+                      type: integer
+
+                    example:
+                      - 1
+                      - 5
+                      - 8
 
                   assignment_type:
                     type: string
@@ -1920,13 +1984,27 @@ paths:
                           type: string
                           example: TEMPORARY
 
-                        from_location_id:
-                          type: integer
-                          example: 1
+                        from_location_ids:
+                          type: array
+                          description: Previous permanent service locations.
 
-                        to_location_id:
-                          type: integer
-                          example: 5
+                          items:
+                            type: integer
+
+                          example:
+                            - 1
+                            - 2
+
+                        to_location_ids:
+                          type: array
+                          description: New assigned service locations.
+
+                          items:
+                            type: integer
+
+                          example:
+                            - 5
+    - 8
 
                         assignment_start_time:
                           type: string
@@ -2972,7 +3050,7 @@ paths:
 
       security:
         - bearerAuth: []
-      
+
       parameters:
         - in: query
           name: location_id
@@ -3322,6 +3400,28 @@ paths:
                         full_name:
                           type: string
                           example: Kasun Perera
+
+                        permanent_location_ids:
+                          type: array
+                          description: Permanent service locations assigned to the employee.
+
+                          items:
+                            type: integer
+
+                          example:
+                            - 1
+                            - 5
+
+                        temporary_location_ids:
+                          type: array
+                          description: Active temporary service locations assigned to the employee.
+
+                          items:
+                            type: integer
+
+                          example:
+                            - 8
+                            - 12
 
                         designation:
                           type: string
@@ -3893,7 +3993,6 @@ paths:
                     type: string
                     example: "550e8400-e29b-41d4-a716-446655440000"
 
-                  
                   verification_status:
                     type: string
                     enum:
@@ -3966,7 +4065,6 @@ paths:
                     type: string
                     example: "550e8400-e29b-41d4-a716-446655440000"
 
-                 
                   verification_status:
                     type: string
                     enum:
@@ -3977,7 +4075,6 @@ paths:
                       - BLOCKED
 
                     example: IN_PROGRESS
-                    
 
                   completed_steps:
                     type: array
@@ -4151,7 +4248,6 @@ paths:
                     type: boolean
                     example: true
 
-                  
                   biometric_status:
                     type: string
 
