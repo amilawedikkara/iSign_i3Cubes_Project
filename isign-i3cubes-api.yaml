@@ -164,9 +164,17 @@ paths:
 
                   user:
                     $ref: "#/components/schemas/User"
-                  assignedRegion:
-                    type: string
-                    example: Western Province
+                  assignedRegions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        region_id:
+                          type: integer
+                          example: 10
+                        region_name:
+                          type: string
+                          example: Western Province
 
                   assignedLocations:
                     type: array
@@ -465,6 +473,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ForbiddenResponse"
+
   /api/v1/users/{id}:
     put:
       tags:
@@ -508,6 +517,19 @@ paths:
                 role_id:
                   type: integer
                   example: 1
+
+                region_ids:
+                  type: array
+                  description: |
+                    List of region IDs assigned to this portal user.
+                    Used to control regional visibility for EME / Area Manager and Regional Manager users.
+                    Admin users may have access to all regions by default.
+                  items:
+                    type: integer
+                  example:
+                    - 10
+                    - 11
+                    - 12
 
       responses:
         "200":
