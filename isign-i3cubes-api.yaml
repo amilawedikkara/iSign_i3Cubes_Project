@@ -1,63 +1,73 @@
 openapi: 3.0.3
-
 info:
   title: iSign i3Cubes API
   version: 1.0.0
-  description: |
-    API documentation for the iSign i3Cubes Attendance Management System.
+  description: 'API documentation for the iSign i3Cubes Attendance Management System.
+
     Supported Languages:
+
     - English
+
     - Sinhala
+
     - Tamil
 
+    '
 servers:
-  - url: https://api.isign.i3cubes.com
-    description: Production Server
-
+- url: https://api.isign.i3cubes.com
+  description: Production Server
+- url: http://124.43.201.83:9091
+  description: Development Server - tested device registration APIs
 tags:
-  - name: Authentication
-    description: User authentication APIs
-  - name: User Management
-    description: Admin portal user management APIs
-  - name: Role Management
-    description: Role and permission management APIs
-  - name: Service Locations
-    description: Service location management APIs
-  - name: Employee Management
-    description: Employee management APIs
-  - name: Attendance Management
-    description: Attendance management APIs
-  - name: Roster Management
-    description: Employee roster management APIs
-  - name: Device Registration
-    description: Mobile device registration APIs
-  - name: Attendance Verification
-    description: Secure attendance verification session APIs for secret code, selfie, liveness, GPS, and verification completion
-  - name: Biometrics
-    description: Face enrollment, face verification, liveness detection, and future biometric support APIs
-  - name: HR Integration
-    description: HR employee and roster synchronization APIs
-  - name: Security and Audit
-    description: Fraud detection, audit logs, verification audit, and security monitoring APIs
-  - name: Reports
-    description: Attendance reports, analytics, and payroll export APIs
-
+- name: Authentication
+  description: User authentication APIs
+- name: User Management
+  description: Admin portal user management APIs
+- name: Role Management
+  description: Role and permission management APIs
+- name: Service Locations
+  description: Service location management APIs
+- name: Employee Management
+  description: Employee management APIs
+- name: Attendance Management
+  description: Attendance management APIs
+- name: Roster Management
+  description: Employee roster management APIs
+- name: Device Registration
+  description: Mobile device registration APIs
+- name: Attendance Verification
+  description: Secure attendance verification session APIs for secret code, selfie,
+    liveness, GPS, and verification completion
+- name: Biometrics
+  description: Face enrollment, face verification, liveness detection, and future
+    biometric support APIs
+- name: HR Integration
+  description: HR employee and roster synchronization APIs
+- name: Security and Audit
+  description: Fraud detection, audit logs, verification audit, and security monitoring
+    APIs
+- name: Reports
+  description: Attendance reports, analytics, and payroll export APIs
 paths:
   /api/v1/auth/login:
     post:
       tags:
-        - Authentication
-
+      - Authentication
       summary: User Login
-      description: |
-        Authenticate portal users using username and password.
+      description: 'Authenticate portal users using username and password.
+
 
         Supported Roles:
+
         - Administrator
+
         - EME Area Manager
+
         - Regional Manager
+
+        '
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
         content:
@@ -65,105 +75,85 @@ paths:
             schema:
               type: object
               required:
-                - username
-                - password
+              - username
+              - password
               properties:
                 username:
                   type: string
                   example: admin@isign.lk
-
                 password:
                   type: string
                   format: password
                   example: P@ssw0rd123
-
       responses:
-        "200":
+        '200':
           description: Login successful
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   message:
                     type: string
                     example: Login successful
-
                   token:
                     type: string
                     example: eyJhbGciOiJIUzI1NiIsInR5cCI...
-
                   user:
                     type: object
-
                     properties:
                       id:
                         type: integer
                         example: 101
-
                       user_name:
                         type: string
                         example: John Doe
-
                       email:
                         type: string
                         example: admin@isign.lk
-
                       role_id:
                         type: integer
                         example: 1
-
-        "401":
+        '401':
           description: Invalid username or password
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "500":
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
           description: Internal server error
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/auth/me:
     get:
       tags:
-        - Authentication
-
+      - Authentication
       summary: Get Current Logged User
-      description: |
-        Returns authenticated user details using JWT token.
+      description: 'Returns authenticated user details using JWT token.
 
+        '
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: User details fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   user:
-                    $ref: "#/components/schemas/User"
+                    $ref: '#/components/schemas/User'
                   assignedRegions:
                     type: array
                     items:
@@ -175,471 +165,376 @@ paths:
                         region_name:
                           type: string
                           example: Western Province
-
                   assignedLocations:
                     type: array
-
                     items:
                       type: string
-
                     example:
-                      - Colombo Central
-                      - Kaduwela
-                      - Maharagama
+                    - Colombo Central
+                    - Kaduwela
+                    - Maharagama
                   permissions:
                     type: array
-
                     items:
                       type: string
-
                     example:
-                      - VIEW_ATTENDANCE
-                      - EDIT_ATTENDANCE
-                      - MANAGE_EMPLOYEES
-        "401":
+                    - VIEW_ATTENDANCE
+                    - EDIT_ATTENDANCE
+                    - MANAGE_EMPLOYEES
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/devices/request-otp:
     post:
       tags:
-        - Device Registration
+      - Device Registration
+      summary: Request / Resend Device Activation OTP
+      description: 'Request or resend SMS OTP for activating a registered mobile device.
 
-      summary: Request Device Registration SMS OTP
 
-      description: |
-        Request SMS OTP for registering a mobile device to a service location.
+        Tested flow:
 
-        This endpoint starts the trusted terminal registration flow:
-        1. Mobile app submits service location code and device UUID.
-        2. Backend validates the service location code.
-        3. Backend sends SMS OTP to the configured service location contact.
-        4. Mobile app uses the received OTP in POST /api/v1/devices.
+        1. Mobile app registers the device using POST /api/v1/devices/.
 
+        2. Mobile app requests OTP using location_code and device_uuid.
+
+        3. Backend sends OTP to the configured service-location contact.
+
+        4. Mobile app uses the received OTP in POST /api/v1/devices/activate.
+
+
+        This same endpoint is used by the Activation screen Resend OTP button.
+
+        '
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - location_code
-                - device_uuid
-
+              - location_code
+              - device_uuid
               properties:
                 location_code:
                   type: string
-                  example: COL-7788
-
+                  example: GAL-001
                 device_uuid:
                   type: string
-                  example: "A1B2-C3D4-E5F6"
-
+                  example: TEST-DEVICE-032
       responses:
-        "200":
-          description: SMS OTP sent successfully
-
+        '200':
+          description: OTP sent successfully
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   message:
                     type: string
-                    example: SMS OTP sent successfully
-
-                  expires_in:
-                    type: integer
-                    example: 300
-
-        "400":
-          description: Invalid location code or device UUID
-
+                    example: OTP sent successfully
+        '400':
+          description: Invalid location code, device UUID, or inactive registration
+            state
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "429":
+                $ref: '#/components/schemas/ErrorResponse'
+        '429':
           description: Too many OTP requests
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/device-auth:
     post:
       tags:
-        - Device Registration
-
+      - Device Registration
       summary: Authenticate Registered Device
-
-      description: |
-        Authenticate registered service location device and return device session token.
-
-        Device Authentication Flow:
-        1. Device is registered to a service location using SMS verification.
-        2. Mobile app securely stores the returned device token.
-        3. On every app launch, the app automatically authenticates using the registered device information.
-        4. If device authentication succeeds, the app opens directly to the main operational screen.
-        5. If device authentication fails or device registration is removed, the app returns to the registration flow.
-        6. Mobile users never log in using username/password authentication.
-
-        This endpoint supports the trusted shared terminal architecture used by service locations.
+      description: Deprecated. Use POST /api/v1/devices/authenticate. This older path
+        was replaced after testing the updated device registration flow.
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - device_uuid
-                - location_code
-
+              - device_uuid
+              - location_code
               properties:
                 device_uuid:
                   type: string
-                  example: "A1B2-C3D4-E5F6"
-
+                  example: A1B2-C3D4-E5F6
                 location_code:
                   type: string
                   example: COL-7788
-
       responses:
-        "200":
+        '200':
           description: Device authenticated successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   device_token:
                     type: string
                     example: eyJhbGciOiJIUzI1NiIsInR5cCI...
-
                   location_id:
                     type: integer
                     example: 1
-
-        "401":
+        '401':
           description: Invalid device authentication
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
+      deprecated: true
   /api/v1/users:
     get:
       tags:
-        - User Management
-
+      - User Management
       summary: Get Users List
-      description: |
-        Returns paginated list of portal users.
+      description: 'Returns paginated list of portal users.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Users fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   users:
                     type: array
-
                     items:
-                      $ref: "#/components/schemas/User"
-        "401":
+                      $ref: '#/components/schemas/User'
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
+                $ref: '#/components/schemas/ForbiddenResponse'
     post:
       tags:
-        - User Management
-
+      - User Management
       summary: Create User
-      description: |
-        Create new portal user.
+      description: 'Create new portal user.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - user_name
-                - email
-                - password
-                - role_id
-
+              - user_name
+              - email
+              - password
+              - role_id
               properties:
                 user_name:
                   type: string
                   example: John Doe
-
                 email:
                   type: string
                   example: john@isign.lk
-
                 password:
                   type: string
                   format: password
                   example: P@ssw0rd123
-
                 role_id:
                   type: integer
                   example: 1
-
       responses:
-        "201":
+        '201':
           description: User created successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/users/{id}:
     put:
       tags:
-        - User Management
-
+      - User Management
       summary: Update User
-      description: |
-        Update existing portal user.
+      description: 'Update existing portal user.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 101
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 101
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               properties:
                 user_name:
                   type: string
                   example: John Doe
-
                 email:
                   type: string
                   example: john@isign.lk
-
                 role_id:
                   type: integer
                   example: 1
-
                 region_ids:
                   type: array
-                  description: |
-                    List of region IDs assigned to this portal user.
-                    Used to control regional visibility for EME / Area Manager and Regional Manager users.
+                  description: 'List of region IDs assigned to this portal user.
+
+                    Used to control regional visibility for EME / Area Manager and
+                    Regional Manager users.
+
                     Admin users may have access to all regions by default.
+
+                    '
                   items:
                     type: integer
                   example:
-                    - 10
-                    - 11
-                    - 12
-
+                  - 10
+                  - 11
+                  - 12
       responses:
-        "200":
+        '200':
           description: User updated successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: User not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
-        - User Management
-
+      - User Management
       summary: Delete User
-      description: |
-        Delete existing portal user.
+      description: 'Delete existing portal user.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 101
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 101
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: User deleted successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: User not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/roles:
     get:
       tags:
-        - Role Management
-
+      - Role Management
       summary: Get Roles List
-      description: |
-        Returns available system roles and permissions.
+      description: 'Returns available system roles and permissions.
 
+        '
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Roles fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   roles:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         role_id:
                           type: integer
@@ -647,802 +542,644 @@ paths:
                         role_name:
                           type: string
                           example: Administrator
-
                         permissions:
                           type: array
-
                           items:
                             type: string
-
                           example:
-                            - VIEW_ATTENDANCE
-                            - MANAGE_USERS
-                            - MANAGE_EMPLOYEES
-
-        "401":
+                          - VIEW_ATTENDANCE
+                          - MANAGE_USERS
+                          - MANAGE_EMPLOYEES
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
+                $ref: '#/components/schemas/ForbiddenResponse'
     post:
       tags:
-        - Role Management
-
+      - Role Management
       summary: Create Role
+      description: 'Create new system role and assign permissions.
 
-      description: |
-        Create new system role and assign permissions.
-
+        '
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - role_name
-                - permissions
-
+              - role_name
+              - permissions
               properties:
                 role_name:
                   type: string
                   example: Regional Manager
-
                 permissions:
                   type: array
-
                   items:
                     type: string
-
                   example:
-                    - VIEW_ATTENDANCE
-                    - MANAGE_EMPLOYEES
-                    - MANAGE_ROSTERS
-
+                  - VIEW_ATTENDANCE
+                  - MANAGE_EMPLOYEES
+                  - MANAGE_ROSTERS
       responses:
-        "201":
+        '201':
           description: Role created successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/roles/{id}:
     put:
       tags:
-        - Role Management
-
+      - Role Management
       summary: Update Role
+      description: 'Update existing role and permissions.
 
-      description: |
-        Update existing role and permissions.
-
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 1
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               properties:
                 role_name:
                   type: string
                   example: Regional Manager
-
                 permissions:
                   type: array
-
                   items:
                     type: string
-
                   example:
-                    - VIEW_ATTENDANCE
-                    - EDIT_ATTENDANCE
-
+                  - VIEW_ATTENDANCE
+                  - EDIT_ATTENDANCE
       responses:
-        "200":
+        '200':
           description: Role updated successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Role not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
-        - Role Management
-
+      - Role Management
       summary: Delete Role
+      description: 'Delete existing system role.
 
-      description: |
-        Delete existing system role.
-
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 1
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Role deleted successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Role not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/regions:
     get:
       tags:
-        - Service Locations
-
+      - Service Locations
       summary: Get Regions List
+      description: 'Returns available operational regions for dropdown selection.
 
-      description: |
-        Returns available operational regions for dropdown selection.
 
         UI Usage:
+
         - Used as the first-level filter before selecting service locations.
-        - Frontend should load locations using GET /api/v1/locations?region_id={region_id} after a region is selected.
 
+        - Frontend should load locations using GET /api/v1/locations?region_id={region_id}
+        after a region is selected.
+
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Regions fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   regions:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         region_id:
                           type: integer
                           example: 10
-
                         region_name:
                           type: string
                           example: Western Province
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/locations:
     get:
       tags:
-        - Service Locations
-
+      - Service Locations
       summary: Get Service Locations
+      description: 'Returns available service locations.
 
-      description: |
-        Returns available service locations.
 
         UI Usage:
+
         - Used for location dropdown selection.
+
         - Supports optional filtering by region_id.
+
         - Frontend should first load regions using GET /api/v1/regions.
+
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: query
-          name: region_id
+      - in: query
+        name: region_id
+        schema:
+          type: integer
+        required: false
+        example: 10
+        description: 'Optional region filter.
 
-          schema:
-            type: integer
+          Used for dependent location dropdown filtering.
 
-          required: false
-
-          example: 10
-
-          description: |
-            Optional region filter.
-            Used for dependent location dropdown filtering.
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+          '
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Locations fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   locations:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         location_id:
                           type: integer
                           example: 1
-
                         location_name:
                           type: string
                           example: Colombo Central
-
                         location_code:
                           type: string
                           example: COL-7788
-                          description: Unique service location code provided by the customer.
-
+                          description: Unique service location code provided by the
+                            customer.
                         latitude:
                           type: number
                           format: double
                           example: 6.9271
-                          description: Service location latitude used for GPS boundary validation.
-
+                          description: Service location latitude used for GPS boundary
+                            validation.
                         longitude:
                           type: number
                           format: double
                           example: 79.8612
-                          description: Service location longitude used for GPS boundary validation.
-
+                          description: Service location longitude used for GPS boundary
+                            validation.
                         region_id:
                           type: integer
                           example: 10
-
                         region_name:
                           type: string
                           example: Western Province
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
     post:
       tags:
-        - Service Locations
-
+      - Service Locations
       summary: Create Service Location
+      description: 'Create new service location.
 
-      description: |
-        Create new service location.
 
         Location Rules:
+
         - location_code is provided by the customer and must be unique.
+
         - latitude and longitude are required for GPS boundary validation.
+
         - Only authorized admin users can create service locations.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - location_name
-                - location_code
-                - region_id
-                - latitude
-                - longitude
-
+              - location_name
+              - location_code
+              - region_id
+              - latitude
+              - longitude
               properties:
                 location_name:
                   type: string
                   example: Colombo Central
-
                 location_code:
                   type: string
                   example: COL-7788
-                  description: Unique service location code provided by the customer. This code is used for mobile device registration and must be unique across all locations.
-
+                  description: Unique service location code provided by the customer.
+                    This code is used for mobile device registration and must be unique
+                    across all locations.
                 region_id:
                   type: integer
                   example: 10
-
                 latitude:
                   type: number
                   format: double
                   example: 6.9271
                   description: Service location latitude used for GPS boundary validation.
-
                 longitude:
                   type: number
                   format: double
                   example: 79.8612
                   description: Service location longitude used for GPS boundary validation.
-
       responses:
-        "201":
+        '201':
           description: Location created successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/locations/{id}:
     put:
       tags:
-        - Service Locations
-
+      - Service Locations
       summary: Update Service Location
+      description: 'Update existing service location.
 
-      description: |
-        Update existing service location.
 
         Update Rules:
+
         - location_code must remain unique across all service locations.
+
         - latitude and longitude updates affect GPS boundary validation.
+
         - Only authorized admin users can update service location code and GPS coordinates.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 1
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               properties:
                 location_name:
                   type: string
                   example: Colombo Central
-
                 location_code:
                   type: string
                   example: COL-7788
-                  description: Unique service location code provided by the customer. Editable by authorized admin users only.
-
+                  description: Unique service location code provided by the customer.
+                    Editable by authorized admin users only.
                 region_id:
                   type: integer
                   example: 10
-
                 latitude:
                   type: number
                   format: double
                   example: 6.9271
                   description: Service location latitude used for GPS boundary validation.
-
                 longitude:
                   type: number
                   format: double
                   example: 79.8612
                   description: Service location longitude used for GPS boundary validation.
-
       responses:
-        "200":
+        '200':
           description: Location updated successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Location not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
-        - Service Locations
-
+      - Service Locations
       summary: Delete Service Location
-      description: |
-        Delete existing service location.
+      description: 'Delete existing service location.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 1
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Location deleted successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Location not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/designations:
     get:
       tags:
-        - Employee Management
-
+      - Employee Management
       summary: Get Designations List
+      description: 'Returns available employee designations for dropdown selection.
 
-      description: |
-        Returns available employee designations for dropdown selection.
 
         UI Usage:
+
         - Used in employee create/update forms.
+
         - Used for employee filtering and reporting.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Designations fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   designations:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         designation_id:
                           type: integer
                           example: 5
-
                         designation_name:
                           type: string
                           example: Paramedic
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/employees:
     get:
       tags:
-        - Employee Management
-
+      - Employee Management
       summary: Get Employees List
-      description: |
-        Returns paginated list of employees.
+      description: 'Returns paginated list of employees.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: query
-          name: location_id
+      - in: query
+        name: location_id
+        schema:
+          type: integer
+        required: false
+        example: 1
+        description: 'Filter employees by assigned service location.
 
-          schema:
-            type: integer
+          '
+      - in: query
+        name: designation_id
+        schema:
+          type: integer
+        required: false
+        example: 5
+        description: 'Filter employees by designation.
 
-          required: false
+          '
+      - in: query
+        name: status_id
+        schema:
+          type: integer
+        required: false
+        example: 1
+        description: 'Filter employees by employee status.
 
-          example: 1
+          '
+      - in: query
+        name: search
+        schema:
+          type: string
+        required: false
+        example: John
+        description: 'Search employees by employee code or full name.
 
-          description: |
-            Filter employees by assigned service location.
-
-        - in: query
-          name: designation_id
-
-          schema:
-            type: integer
-
-          required: false
-
-          example: 5
-
-          description: |
-            Filter employees by designation.
-
-        - in: query
-          name: status_id
-
-          schema:
-            type: integer
-
-          required: false
-
-          example: 1
-
-          description: |
-            Filter employees by employee status.
-
-        - in: query
-          name: search
-
-          schema:
-            type: string
-
-          required: false
-
-          example: John
-
-          description: |
-            Search employees by employee code or full name.
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+          '
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Employees fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   employees:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         employee_id:
                           type: integer
                           example: 1001
-
                         employee_code:
                           type: string
                           example: EMP001
-
                         full_name:
                           type: string
                           example: John Doe
-
                         permanent_location_ids:
                           type: array
-                          description: Permanent service locations assigned to the employee.
-
+                          description: Permanent service locations assigned to the
+                            employee.
                           items:
                             type: integer
-
                           example:
-                            - 1
-                            - 5
-
+                          - 1
+                          - 5
                         temporary_location_ids:
                           type: array
-                          description: Active temporary service locations assigned to the employee.
-
+                          description: Active temporary service locations assigned
+                            to the employee.
                           items:
                             type: integer
-
                           example:
-                            - 8
-                            - 12
-
+                          - 8
+                          - 12
                         location_id:
                           type: integer
                           example: 1
-
                         mobile_number:
                           type: string
-                          example: "0771234567"
-
+                          example: '0771234567'
                         status_id:
                           type: integer
                           example: 1
@@ -1450,2858 +1187,2413 @@ paths:
                           type: boolean
                           nullable: true
                           example: true
-
                         face_enrolled:
                           type: boolean
                           nullable: true
                           example: false
-
                         biometric_status:
                           type: string
-
                           nullable: true
-
                           enum:
-                            - NOT_ENROLLED
-                            - PENDING
-                            - ACTIVE
-                            - FAILED
-                            - INACTIVE
-
+                          - NOT_ENROLLED
+                          - PENDING
+                          - ACTIVE
+                          - FAILED
+                          - INACTIVE
                           example: PENDING
-
                         verification_required:
                           type: boolean
                           nullable: true
                           example: true
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
     post:
       tags:
-        - Employee Management
-
+      - Employee Management
       summary: Create Employee
-      description: |
-        Create new employee.
+      description: 'Create new employee.
 
+        '
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - employee_code
-                - full_name
-                - designation_id
-                - permanent_location_ids
-                - status_id
-
+              - employee_code
+              - full_name
+              - designation_id
+              - permanent_location_ids
+              - status_id
               properties:
                 employee_code:
                   type: string
                   example: EMP001
-
                 full_name:
                   type: string
                   example: John Doe
-
                 designation_id:
                   type: integer
                   example: 5
-
                 permanent_location_ids:
                   type: array
                   description: Permanent service locations assigned to the employee.
-
                   items:
                     type: integer
-
                   example:
-                    - 1
-                    - 5
-
+                  - 1
+                  - 5
                 mobile_number:
                   type: string
-                  example: "0771234567"
-
+                  example: '0771234567'
                 status_id:
                   type: integer
                   example: 1
-
       responses:
-        "201":
+        '201':
           description: Employee created successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/employees/{id}:
     put:
       tags:
-        - Employee Management
-
+      - Employee Management
       summary: Update Employee
-      description: |
-        Update existing employee.
+      description: 'Update existing employee.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1001
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 1001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               properties:
                 full_name:
                   type: string
                   example: John Doe
-
                 designation_id:
                   type: integer
                   example: 5
-
                 permanent_location_ids:
                   type: array
                   description: Permanent service locations assigned to the employee.
-
                   items:
                     type: integer
-
                   example:
-                    - 1
-                    - 5
-
+                  - 1
+                  - 5
                 mobile_number:
                   type: string
-                  example: "0771234567"
-
+                  example: '0771234567'
                 status_id:
                   type: integer
                   example: 1
-
       responses:
-        "200":
+        '200':
           description: Employee updated successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Employee not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
-        - Employee Management
-
+      - Employee Management
       summary: Delete Employee
-      description: |
-        Delete existing employee.
+      description: 'Delete existing employee.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1001
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 1001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Employee deleted successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Employee not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/employees/{id}/assignments/temporary:
     post:
       tags:
-        - Employee Management
-
+      - Employee Management
       summary: Create Temporary Employee Assignment
+      description: 'Temporarily assign an employee to one or more service locations.
 
-      description: |
-        Temporarily assign an employee to one or more service locations.
 
         Assignment Rules:
+
         1. Employee remains assigned until assignment_end_time.
+
         2. Assignment automatically expires after the configured end time.
-        3. Temporary location assignments automatically expire after the configured end time.
+
+        3. Temporary location assignments automatically expire after the configured
+        end time.
+
         4. Assignment activity is recorded in the audit trail.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1001
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 1001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - temporary_location_ids
-                - assignment_start_time
-                - assignment_end_time
-
+              - temporary_location_ids
+              - assignment_start_time
+              - assignment_end_time
               properties:
                 temporary_location_ids:
                   type: array
-                  description: Multiple temporary service locations assigned to the employee.
-
+                  description: Multiple temporary service locations assigned to the
+                    employee.
                   items:
                     type: integer
-
                   example:
-                    - 5
-                    - 8
-                    - 12
-
+                  - 5
+                  - 8
+                  - 12
                 assignment_start_time:
                   type: string
                   format: date-time
-                  example: "2026-05-22T08:00:00Z"
-
+                  example: '2026-05-22T08:00:00Z'
                 assignment_end_time:
                   type: string
                   format: date-time
-                  example: "2026-05-29T20:00:00Z"
-
+                  example: '2026-05-29T20:00:00Z'
                 assignment_reason:
                   type: string
                   example: Temporary staffing shortage coverage
-
       responses:
-        "201":
+        '201':
           description: Temporary assignment created successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   employee_id:
                     type: integer
                     example: 1001
-
                   temporary_location_ids:
                     type: array
-                    description: Multiple temporary service locations assigned to the employee.
-
+                    description: Multiple temporary service locations assigned to
+                      the employee.
                     items:
                       type: integer
-
                     example:
-                      - 5
-                      - 8
-                      - 12
-
+                    - 5
+                    - 8
+                    - 12
                   assignment_active:
                     type: boolean
                     example: true
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Insufficient permission for employee assignment
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Employee or location not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/employees/{id}/assignments/permanent:
     post:
       tags:
-        - Employee Management
-
+      - Employee Management
       summary: Create Permanent Employee Assignment
+      description: 'Permanently assign an employee to one or more service locations.
 
-      description: |
-        Permanently assign an employee to one or more service locations.
 
         Assignment Rules:
+
         1. Employee primary location assignment is updated permanently.
+
         2. Previous location assignment is released.
+
         3. Assignment activity is recorded in the audit trail.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1001
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 1001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - permanent_location_ids
-
+              - permanent_location_ids
               properties:
                 permanent_location_ids:
                   type: array
-                  description: Multiple permanent service locations assigned to the employee.
-
+                  description: Multiple permanent service locations assigned to the
+                    employee.
                   items:
                     type: integer
-
                   example:
-                    - 1
-                    - 5
-                    - 8
-
+                  - 1
+                  - 5
+                  - 8
                 assignment_reason:
                   type: string
                   example: Permanent transfer to regional office
-
       responses:
-        "200":
+        '200':
           description: Permanent assignment completed successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   employee_id:
                     type: integer
                     example: 1001
-
                   permanent_location_ids:
                     type: array
-                    description: Multiple permanent service locations assigned to the employee.
-
+                    description: Multiple permanent service locations assigned to
+                      the employee.
                     items:
                       type: integer
-
                     example:
-                      - 1
-                      - 5
-                      - 8
-
+                    - 1
+                    - 5
+                    - 8
                   assignment_type:
                     type: string
                     example: PERMANENT
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Insufficient permission for employee assignment
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Employee or location not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/employees/{id}/assignments:
     get:
       tags:
-        - Employee Management
-
+      - Employee Management
       summary: Get Employee Assignment History
+      description: 'Returns permanent and temporary assignment history for an employee.
 
-      description: |
-        Returns permanent and temporary assignment history for an employee.
 
         Includes:
+
         - assignment type
+
         - assigned locations
+
         - assignment period
+
         - assignment status
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1001
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 1001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Assignment history fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   employee_id:
                     type: integer
                     example: 1001
-
                   assignments:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         assignment_type:
                           type: string
                           example: TEMPORARY
-
                         from_location_ids:
                           type: array
                           description: Previous permanent service locations.
-
                           items:
                             type: integer
-
                           example:
-                            - 1
-                            - 2
-
+                          - 1
+                          - 2
                         to_location_ids:
                           type: array
                           description: New assigned service locations.
-
                           items:
                             type: integer
-
                           example:
-                            - 5
-                            - 8
-
+                          - 5
+                          - 8
                         assignment_start_time:
                           type: string
                           format: date-time
-                          example: "2026-05-22T08:00:00Z"
-
+                          example: '2026-05-22T08:00:00Z'
                         assignment_end_time:
                           type: string
                           format: date-time
                           nullable: true
-                          example: "2026-05-29T20:00:00Z"
-
+                          example: '2026-05-29T20:00:00Z'
                         assignment_status:
                           type: string
                           example: ACTIVE
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Insufficient permission to view assignment history
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Employee not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/attendance:
     get:
       tags:
-        - Attendance Management
-
+      - Attendance Management
       summary: Get Attendance Records
-      description: |
-        Returns attendance records.
+      description: 'Returns attendance records.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: query
-          name: employee_id
+      - in: query
+        name: employee_id
+        schema:
+          type: integer
+        example: 1001
+      - in: query
+        name: location_id
+        schema:
+          type: integer
+        example: 1
+      - in: query
+        name: attendance_date
+        schema:
+          type: string
+          format: date
+        example: 2025-01-15
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+        required: false
+        example: 2026-05-01
+        description: 'Filter attendance records from this date.
 
-          schema:
-            type: integer
+          '
+      - in: query
+        name: end_date
+        schema:
+          type: string
+          format: date
+        required: false
+        example: 2026-05-31
+        description: 'Filter attendance records up to this date.
 
-          example: 1001
+          '
+      - in: query
+        name: verification_status
+        schema:
+          type: string
+          enum:
+          - VERIFIED
+          - PENDING
+          - FAILED
+        required: false
+        example: VERIFIED
+        description: 'Filter attendance records by verification outcome.
 
-        - in: query
-          name: location_id
-
-          schema:
-            type: integer
-
-          example: 1
-
-        - in: query
-          name: attendance_date
-
-          schema:
-            type: string
-            format: date
-
-          example: 2025-01-15
-
-        - in: query
-          name: start_date
-
-          schema:
-            type: string
-            format: date
-
-          required: false
-
-          example: 2026-05-01
-
-          description: |
-            Filter attendance records from this date.
-
-        - in: query
-          name: end_date
-
-          schema:
-            type: string
-            format: date
-
-          required: false
-
-          example: 2026-05-31
-
-          description: |
-            Filter attendance records up to this date.
-
-        - in: query
-          name: verification_status
-
-          schema:
-            type: string
-
-            enum:
-              - VERIFIED
-              - PENDING
-              - FAILED
-
-          required: false
-
-          example: VERIFIED
-
-          description: |
-            Filter attendance records by verification outcome.
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+          '
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Attendance records fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   attendance:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         attendance_id:
                           type: integer
                           example: 5001
-
                         employee_id:
                           type: integer
                           example: 1001
-
                         location_id:
                           type: integer
                           example: 1
-
                         check_in_time:
                           type: string
                           format: date-time
-
-                          example: "2025-01-15T08:30:00"
-
+                          example: '2025-01-15T08:30:00'
                         check_out_time:
                           type: string
                           format: date-time
-
-                          example: "2025-01-15T17:30:00"
-
+                          example: '2025-01-15T17:30:00'
                         status_id:
                           type: integer
                           example: 1
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
     post:
       tags:
-        - Attendance Management
-
+      - Attendance Management
       summary: Create Attendance Record
-      description: |
-        Create new attendance record.
+      description: 'Create new attendance record.
 
+        '
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - employee_id
-                - location_id
-                - check_in_time
-                - status_id
-
+              - employee_id
+              - location_id
+              - check_in_time
+              - status_id
               properties:
                 employee_id:
                   type: integer
                   example: 1001
-
                 location_id:
                   type: integer
                   example: 1
-
                 check_in_time:
                   type: string
                   format: date-time
-
-                  example: "2025-01-15T08:30:00"
-
+                  example: '2025-01-15T08:30:00'
                 check_out_time:
                   type: string
                   format: date-time
-
-                  example: "2025-01-15T17:30:00"
-
+                  example: '2025-01-15T17:30:00'
                 status_id:
                   type: integer
                   example: 1
-
       responses:
-        "201":
+        '201':
           description: Attendance record created successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/attendance/{id}:
     put:
       tags:
-        - Attendance Management
-
+      - Attendance Management
       summary: Update Attendance Record
-      description: |
-        Update existing attendance record.
+      description: 'Update existing attendance record.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 5001
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 5001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               properties:
                 check_in_time:
                   type: string
                   format: date-time
-
-                  example: "2025-01-15T08:30:00"
-
+                  example: '2025-01-15T08:30:00'
                 check_out_time:
                   type: string
                   format: date-time
-
-                  example: "2025-01-15T17:30:00"
-
+                  example: '2025-01-15T17:30:00'
                 status_id:
                   type: integer
                   example: 1
-
       responses:
-        "200":
+        '200':
           description: Attendance record updated successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Attendance record not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
-        - Attendance Management
-
+      - Attendance Management
       summary: Delete Attendance Record
-      description: |
-        Delete existing attendance record.
+      description: 'Delete existing attendance record.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 5001
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 5001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Attendance record deleted successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Attendance record not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/attendance/{id}/correction:
     post:
       tags:
-        - Attendance Management
-
+      - Attendance Management
       summary: Submit Attendance Correction
+      description: 'Submit one-time attendance correction for an employee attendance
+        record.
 
-      description: |
-        Submit one-time attendance correction for an employee attendance record.
 
         Correction Rules:
+
         1. Only authorized EME or Administrator users can perform corrections.
+
         2. Attendance records can only be corrected once.
+
         3. All corrections are permanently recorded in the audit trail.
+
         4. Original attendance values are preserved for compliance review.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 5001
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 5001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - correction_reason
-
+              - correction_reason
               properties:
                 corrected_check_in_time:
                   type: string
                   format: date-time
-                  example: "2026-05-22T08:30:00Z"
-
+                  example: '2026-05-22T08:30:00Z'
                 corrected_check_out_time:
                   type: string
                   format: date-time
-                  example: "2026-05-22T17:30:00Z"
-
+                  example: '2026-05-22T17:30:00Z'
                 correction_reason:
                   type: string
                   example: Employee forgot to complete check-out
-
       responses:
-        "200":
+        '200':
           description: Attendance correction completed successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   correction_applied:
                     type: boolean
                     example: true
-
                   correction_count:
                     type: integer
                     example: 1
-
-        "400":
+        '400':
           description: Attendance record already corrected
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "401":
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Insufficient permission for attendance correction
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Attendance record not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/attendance/verified-check-in:
     post:
       tags:
-        - Attendance Management
-
+      - Attendance Management
       summary: Create Verified Attendance Check-In
+      description: 'Create employee duty check-in using a completed verification session.
 
-      description: |
-        Create employee duty check-in using a completed verification session.
-        This endpoint is used after secret code, selfie, liveness, and GPS verification are completed.
+        This endpoint is used after secret code, selfie, liveness, and GPS verification
+        are completed.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - verification_session_id
-
+              - verification_session_id
               properties:
                 verification_session_id:
                   type: string
-                  example: "550e8400-e29b-41d4-a716-446655440000"
+                  example: 550e8400-e29b-41d4-a716-446655440000
                 latitude:
                   type: number
                   format: float
                   example: 6.9271
-
                 longitude:
                   type: number
                   format: float
                   example: 79.8612
-
                 record_time:
                   type: string
                   format: date-time
-                  example: "2026-05-21T08:30:00Z"
-
+                  example: '2026-05-21T08:30:00Z'
       responses:
-        "201":
+        '201':
           description: Verified check-in created successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   attendance_id:
                     type: integer
                     example: 5001
-
                   status:
                     type: string
                     example: CHECKED_IN
-
                   check_in_time:
                     type: string
                     format: date-time
-                    example: "2026-05-21T08:30:00Z"
-
-        "401":
+                    example: '2026-05-21T08:30:00Z'
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Verification session invalid, expired, reused, or not completed
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/attendance/verified-check-out:
     post:
       tags:
-        - Attendance Management
-
+      - Attendance Management
       summary: Create Verified Attendance Check-Out
+      description: 'Create employee duty check-out using a completed verification
+        session.
 
-      description: |
-        Create employee duty check-out using a completed verification session.
-        This endpoint is used after secret code, selfie, liveness, and GPS verification are completed.
+        This endpoint is used after secret code, selfie, liveness, and GPS verification
+        are completed.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - verification_session_id
-
+              - verification_session_id
               properties:
                 verification_session_id:
                   type: string
-                  example: "550e8400-e29b-41d4-a716-446655440000"
+                  example: 550e8400-e29b-41d4-a716-446655440000
                 latitude:
                   type: number
                   format: float
                   example: 6.9271
-
                 longitude:
                   type: number
                   format: float
                   example: 79.8612
-
                 record_time:
                   type: string
                   format: date-time
-                  example: "2026-05-21T08:30:00Z"
+                  example: '2026-05-21T08:30:00Z'
       responses:
-        "201":
+        '201':
           description: Verified check-out created successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   attendance_id:
                     type: integer
                     example: 5001
-
                   status:
                     type: string
                     example: CHECKED_OUT
-
                   check_out_time:
                     type: string
                     format: date-time
-                    example: "2026-05-21T17:30:00Z"
-
-        "401":
+                    example: '2026-05-21T17:30:00Z'
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Verification session invalid, expired, reused, or not completed
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/statuses:
     get:
       tags:
-        - Employee Management
-
+      - Employee Management
       summary: Get Status List
+      description: 'Returns available system statuses for dropdown selection.
 
-      description: |
-        Returns available system statuses for dropdown selection.
 
         UI Usage:
+
         - Used in employee management
+
         - Used in device management
+
         - Used in roster and attendance filtering
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Statuses fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   statuses:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         status_id:
                           type: integer
                           example: 1
-
                         status_name:
                           type: string
                           example: ACTIVE
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/rosters:
     get:
       tags:
-        - Roster Management
-
+      - Roster Management
       summary: Get Roster List
-      description: |
-        Returns employee roster schedules.
+      description: 'Returns employee roster schedules.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: query
-          name: employee_id
-
-          schema:
-            type: integer
-
-          example: 1001
-
-        - in: query
-          name: location_id
-
-          schema:
-            type: integer
-
-          example: 1
-
-        - in: query
-          name: roster_date
-
-          schema:
-            type: string
-            format: date
-
-          example: 2025-01-15
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: query
+        name: employee_id
+        schema:
+          type: integer
+        example: 1001
+      - in: query
+        name: location_id
+        schema:
+          type: integer
+        example: 1
+      - in: query
+        name: roster_date
+        schema:
+          type: string
+          format: date
+        example: 2025-01-15
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Roster records fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   rosters:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         roster_id:
                           type: integer
                           example: 7001
-
                         employee_id:
                           type: integer
                           example: 1001
-
                         location_id:
                           type: integer
                           example: 1
-
                         shift_start_time:
                           type: string
                           format: date-time
-
-                          example: "2025-01-15T08:00:00"
-
+                          example: '2025-01-15T08:00:00'
                         shift_end_time:
                           type: string
                           format: date-time
-
-                          example: "2025-01-15T17:00:00"
-
+                          example: '2025-01-15T17:00:00'
                         status_id:
                           type: integer
                           example: 1
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
     post:
       tags:
-        - Roster Management
-
+      - Roster Management
       summary: Create Roster
-      description: |
-        Create employee roster schedule.
+      description: 'Create employee roster schedule.
 
+        '
       security:
-        - bearerAuth: []
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - employee_id
-                - location_id
-                - shift_start_time
-                - shift_end_time
-                - status_id
-
+              - employee_id
+              - location_id
+              - shift_start_time
+              - shift_end_time
+              - status_id
               properties:
                 employee_id:
                   type: integer
                   example: 1001
-
                 location_id:
                   type: integer
                   example: 1
-
                 shift_start_time:
                   type: string
                   format: date-time
-
-                  example: "2025-01-15T08:00:00"
-
+                  example: '2025-01-15T08:00:00'
                 shift_end_time:
                   type: string
                   format: date-time
-
-                  example: "2025-01-15T17:00:00"
-
+                  example: '2025-01-15T17:00:00'
                 status_id:
                   type: integer
                   example: 1
-
       responses:
-        "201":
+        '201':
           description: Roster created successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/rosters/{id}:
     put:
       tags:
-        - Roster Management
-
+      - Roster Management
       summary: Update Roster
-      description: |
-        Update employee roster schedule.
+      description: 'Update employee roster schedule.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 7001
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 7001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               properties:
                 shift_start_time:
                   type: string
                   format: date-time
-
-                  example: "2025-01-15T08:00:00"
-
+                  example: '2025-01-15T08:00:00'
                 shift_end_time:
                   type: string
                   format: date-time
-
-                  example: "2025-01-15T17:00:00"
-
+                  example: '2025-01-15T17:00:00'
                 status_id:
                   type: integer
                   example: 1
-
       responses:
-        "200":
+        '200':
           description: Roster updated successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Roster not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
-        - Roster Management
-
+      - Roster Management
       summary: Delete Roster
-      description: |
-        Delete employee roster schedule.
+      description: 'Delete employee roster schedule.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 7001
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 7001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Roster deleted successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Roster not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/devices:
     get:
       tags:
-        - Device Registration
-
+      - Device Registration
       summary: Get Registered Devices
-      description: |
-        Returns registered mobile devices.
-
-      security:
-        - bearerAuth: []
-
+      description: Returns registered mobile devices. Tested on development server
+        and returned the registered device list.
       parameters:
-        - in: query
-          name: location_id
-
-          schema:
-            type: integer
-
-          required: false
-
-          example: 1
-
-          description: |
-            Filter devices by assigned service location.
-
-        - in: query
-          name: status_id
-
-          schema:
-            type: integer
-
-          required: false
-
-          example: 1
-
-          description: |
-            Filter devices by device status.
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: query
+        name: location_id
+        schema:
+          type: integer
+        required: false
+        example: 1
+        description: Filter devices by assigned service location.
+      - in: query
+        name: status_id
+        schema:
+          type: integer
+        required: false
+        example: 1
+        description: Filter devices by device status.
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Devices fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   devices:
                     type: array
-
                     items:
                       type: object
-
                       properties:
-                        device_id:
-                          type: integer
-                          example: 9001
-
-                        location_id:
-                          type: integer
-                          example: 1001
-
-                        device_uuid:
-                          type: string
-                          example: "A1B2-C3D4-E5F6"
-
-                        device_model:
-                          type: string
-                          example: Samsung Galaxy A54
-
-                        platform:
-                          type: string
-                          example: Android
-
-                        status_id:
+                        id:
                           type: integer
                           example: 1
-
-        "401":
+                        platform:
+                          type: string
+                          nullable: true
+                          example: Android
+                        location_id:
+                          type: integer
+                          example: 9
+                        location_name:
+                          type: string
+                          example: Galle Branch
+                        status_id:
+                          type: integer
+                          example: 2
+                        status_name:
+                          type: string
+                          example: Inactive
+                        code:
+                          type: string
+                          nullable: true
+                          example: null
+                        created_at:
+                          type: string
+                          format: date-time
+                          example: '2026-06-09T15:32:47.490Z'
+                        updated_at:
+                          type: string
+                          format: date-time
+                          example: '2026-06-09T18:08:31.851Z'
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
     post:
       tags:
-        - Device Registration
-
+      - Device Registration
       summary: Register Device
+      description: 'Register a mobile device for trusted service-location attendance
+        usage.
 
-      description: |
-        Register mobile device for trusted service location attendance usage.
 
-        Device Registration Rules:
-        1. One service location can only have one active registered device.
-        2. Device registration is verified using service location code and SMS OTP validation.
-        3. Mobile users do not use username/password authentication.
-        4. If the device is already registered to another service location:
-          - the previous location assignment is automatically removed
-          - the device is reassigned to the new service location
-          - the reassignment event is recorded in the audit trail
-        5. If another active device already exists at the target location, registration is denied until the previous device is removed.
+        Confirmed tested flow:
 
-        This endpoint supports the trusted shared terminal architecture used by service locations.
+        1. Mobile app submits location_code, auto-detected device_uuid, auto-detected
+        device_model, and platform.
+
+        2. Backend validates the location_code.
+
+        3. Backend creates the device registration.
+
+        4. Device remains inactive until OTP activation is completed using POST /api/v1/devices/activate.
+
+
+        Important: location_id, status_id, and sms_otp are not sent in this registration
+        request.
+
+        One service location can only have one registered device. If another device
+        is already registered to the target location, registration is denied.
+
+        '
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - location_id
-                - location_code
-                - sms_otp
-                - device_uuid
-                - device_model
-                - platform
-
+              - location_code
+              - device_uuid
+              - device_model
+              - platform
               properties:
-                location_id:
-                  type: integer
-                  example: 1001
-
+                location_code:
+                  type: string
+                  example: GAL-001
                 device_uuid:
                   type: string
-                  example: "A1B2-C3D4-E5F6"
-
+                  example: TEST-DEVICE-032
                 device_model:
                   type: string
-                  example: Samsung Galaxy A54
-
+                  example: Samsung A25
                 platform:
                   type: string
                   example: Android
-
-                status_id:
-                  type: integer
-                  example: 1
-                location_code:
-                  type: string
-                  example: COL-7788
-
-                sms_otp:
-                  type: string
-                  example: "884422"
-
       responses:
-        "201":
+        '200':
           description: Device registered successfully
-
-        "401":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Device registered successfully
+        '400':
+          description: Invalid location code or business-rule validation failure
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Another device is registered to the location
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/devices/{id}:
     put:
       tags:
-        - Device Registration
-
+      - Device Registration
       summary: Update Device
-      description: |
-        Update registered device details.
+      description: 'Update registered device details.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 9001
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 9001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               properties:
                 device_model:
                   type: string
                   example: Samsung Galaxy A54
-
                 platform:
                   type: string
                   example: Android
-
                 status_id:
                   type: integer
                   example: 1
-
       responses:
-        "200":
+        '200':
           description: Device updated successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Device not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
     delete:
       tags:
-        - Device Registration
-
+      - Device Registration
       summary: Delete Device
-      description: |
-        Delete registered device.
+      description: 'Delete registered device.
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 9001
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: integer
+        example: 9001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Device deleted successfully
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Forbidden
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
-        "404":
+                $ref: '#/components/schemas/ForbiddenResponse'
+        '404':
           description: Device not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/devices/employees:
     get:
       tags:
-        - Device Registration
-
+      - Device Registration
       summary: Get Employees Allocated to Device Location
+      description: 'Returns employees allocated to the authenticated device''s registered
+        service location.
 
-      description: |
-        Returns employees allocated to the authenticated device's registered service location.
 
         This endpoint is intended for:
+
         - mobile trusted terminal usage
+
         - attendance employee selection
+
         - location-scoped employee visibility
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Allocated employees fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   location_id:
                     type: integer
                     example: 1
-
                   employees:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         employee_id:
                           type: integer
                           example: 1001
-
                         employee_code:
                           type: string
                           example: EMP001
-
                         full_name:
                           type: string
                           example: Kasun Perera
-
                         permanent_location_ids:
                           type: array
-                          description: Permanent service locations assigned to the employee.
-
+                          description: Permanent service locations assigned to the
+                            employee.
                           items:
                             type: integer
-
                           example:
-                            - 1
-                            - 5
-
+                          - 1
+                          - 5
                         temporary_location_ids:
                           type: array
-                          description: Active temporary service locations assigned to the employee.
-
+                          description: Active temporary service locations assigned
+                            to the employee.
                           items:
                             type: integer
-
                           example:
-                            - 8
-                            - 12
-
+                          - 8
+                          - 12
                         designation:
                           type: string
                           example: Paramedic
-
                         verification_required:
                           type: boolean
                           example: true
-
                         face_enrolled:
                           type: boolean
                           example: true
-
-        "401":
+        '401':
           description: Unauthorized device authentication
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Device not registered or inactive
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/devices/rosters:
     get:
       tags:
-        - Device Registration
-
+      - Device Registration
       summary: Get Active Rosters for Device Location
+      description: 'Returns employee roster schedules for the authenticated device''s
+        registered service location.
 
-      description: |
-        Returns employee roster schedules for the authenticated device's registered service location.
 
         Intended for:
+
         - mobile trusted terminal roster view
-        - today's roster
+
+        - today''s roster
+
         - upcoming weekly roster visibility
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: query
-          name: start_date
-
-          schema:
-            type: string
-            format: date
-
-          example: 2026-05-22
-
-          required: false
-
-          description: Start date for roster range. Defaults to current date.
-
-        - in: query
-          name: end_date
-
-          schema:
-            type: string
-            format: date
-
-          example: 2026-05-29
-
-          required: false
-
-          description: End date for roster range. Defaults to current date + 7 days.
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: query
+        name: start_date
+        schema:
+          type: string
+          format: date
+        example: 2026-05-22
+        required: false
+        description: Start date for roster range. Defaults to current date.
+      - in: query
+        name: end_date
+        schema:
+          type: string
+          format: date
+        example: 2026-05-29
+        required: false
+        description: End date for roster range. Defaults to current date + 7 days.
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Rosters fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   location_id:
                     type: integer
                     example: 1
-
                   rosters:
                     type: array
-
                     items:
                       type: object
-
                       properties:
                         roster_date:
                           type: string
                           format: date
-
                           example: 2026-05-22
-
                         employee_id:
                           type: integer
                           example: 1001
-
                         employee_name:
                           type: string
                           example: Kasun Perera
-
                         designation:
                           type: string
                           example: Paramedic
-
                         shift_start_time:
                           type: string
                           format: date-time
-
-                          example: "2026-05-22T08:00:00Z"
-
+                          example: '2026-05-22T08:00:00Z'
                         shift_end_time:
                           type: string
                           format: date-time
-
-                          example: "2026-05-22T20:00:00Z"
-
-        "401":
+                          example: '2026-05-22T20:00:00Z'
+        '401':
           description: Unauthorized device authentication
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Device not registered or inactive
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/verification/sessions/start:
     post:
       tags:
-        - Attendance Verification
-
+      - Attendance Verification
       summary: Start Attendance Verification Session
+      description: 'Start secure attendance verification session for employee duty
+        check-in or check-out.
 
-      description: |
-        Start secure attendance verification session for employee duty check-in or check-out.
         This API validates:
+
         - trusted registered device
+
         - allocated employee
+
         - active roster eligibility
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - employee_id
-                - attendance_type
-
+              - employee_id
+              - attendance_type
               properties:
                 employee_id:
                   type: integer
                   example: 1001
-
                 attendance_type:
                   type: string
                   enum:
-                    - CHECK_IN
-                    - CHECK_OUT
-
+                  - CHECK_IN
+                  - CHECK_OUT
                   example: CHECK_IN
-
       responses:
-        "200":
+        '200':
           description: Verification session started successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   verification_session_id:
                     type: string
-                    example: "550e8400-e29b-41d4-a716-446655440000"
-
+                    example: 550e8400-e29b-41d4-a716-446655440000
                   expires_in:
                     type: integer
                     example: 90
-
                   required_steps:
                     type: array
-
                     items:
                       type: string
-
                     example:
-                      - SECRET_CODE
-                      - LIVE_SELFIE
-
-        "401":
+                    - SECRET_CODE
+                    - LIVE_SELFIE
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Verification not allowed
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/verification/sessions/{id}/secret-code:
     post:
       tags:
-        - Attendance Verification
-
+      - Attendance Verification
       summary: Verify Employee Secret Code
+      description: 'Verify employee secret code for attendance verification session.
 
-      description: |
-        Verify employee secret code for attendance verification session.
-
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: string
-
-          example: "550e8400-e29b-41d4-a716-446655440000"
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        example: 550e8400-e29b-41d4-a716-446655440000
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - secret_code
-
+              - secret_code
               properties:
                 secret_code:
                   type: string
-                  example: "4831"
-
+                  example: '4831'
       responses:
-        "200":
+        '200':
           description: Secret code verified successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   secret_code_verified:
                     type: boolean
                     example: true
-
                   remaining_attempts:
                     type: integer
                     example: 2
-
-        "401":
+        '401':
           description: Invalid secret code
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Verification session expired or blocked
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/verification/sessions/{id}/live-selfie:
     post:
       tags:
-        - Attendance Verification
-
+      - Attendance Verification
       summary: Upload Live Selfie Verification
+      description: 'Upload live selfie image for:
 
-      description: |
-        Upload live selfie image for:
         - face recognition
+
         - liveness detection
+
         - anti-spoofing verification
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: string
-
-          example: "550e8400-e29b-41d4-a716-446655440000"
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        example: 550e8400-e29b-41d4-a716-446655440000
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           multipart/form-data:
             schema:
               type: object
-
               required:
-                - image
-
+              - image
               properties:
                 image:
                   type: string
                   format: binary
                   description: Live selfie image file
-
                 captured_at:
                   type: string
                   format: date-time
-
-                  example: "2026-05-21T08:30:00Z"
-
+                  example: '2026-05-21T08:30:00Z'
                 camera_source:
                   type: string
-
                   example: FRONT_CAMERA
       responses:
-        "200":
+        '200':
           description: Selfie verification completed successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   face_detected:
                     type: boolean
                     example: true
-
                   liveness_passed:
                     type: boolean
                     example: true
-
                   face_verified:
                     type: boolean
                     example: true
-
                   confidence_score:
                     type: number
                     format: float
                     example: 0.94
-
                   risk_score:
                     type: number
                     format: float
                     example: 0.08
-
-        "401":
+        '401':
           description: Face verification failed
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Liveness validation failed
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/verification/sessions/{id}/gps:
     post:
       tags:
-        - Attendance Verification
-
+      - Attendance Verification
       summary: Verify Attendance GPS Location
+      description: 'Verify employee attendance GPS location against registered service
+        location boundaries.
 
-      description: |
-        Verify employee attendance GPS location against registered service location boundaries.
-
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: string
-
-          example: "550e8400-e29b-41d4-a716-446655440000"
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        example: 550e8400-e29b-41d4-a716-446655440000
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           application/json:
             schema:
               type: object
-
               required:
-                - latitude
-                - longitude
-
+              - latitude
+              - longitude
               properties:
                 latitude:
                   type: number
                   format: double
-
                   example: 6.9271
-
                 longitude:
                   type: number
                   format: double
-
                   example: 79.8612
-
                 accuracy:
                   type: number
                   format: float
-
                   example: 8.5
-
       responses:
-        "200":
+        '200':
           description: GPS verification completed successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   gps_verified:
                     type: boolean
                     example: true
-
                   distance_meters:
                     type: number
                     format: float
                     example: 12.5
-
                   within_allowed_radius:
                     type: boolean
                     example: true
-
-        "401":
+        '401':
           description: Invalid GPS verification
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Employee outside allowed location boundary
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/verification/sessions/{id}/complete:
     post:
       tags:
-        - Attendance Verification
-
+      - Attendance Verification
       summary: Complete Attendance Verification
+      description: 'Finalize attendance verification session after:
 
-      description: |
-        Finalize attendance verification session after:
         - secret code validation
+
         - live selfie verification
+
         - liveness detection
+
         - GPS validation
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: string
-
-          example: "550e8400-e29b-41d4-a716-446655440000"
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        example: 550e8400-e29b-41d4-a716-446655440000
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Attendance verification completed successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   verification_completed:
                     type: boolean
                     example: true
-
                   verification_session_id:
                     type: string
-                    example: "550e8400-e29b-41d4-a716-446655440000"
-
+                    example: 550e8400-e29b-41d4-a716-446655440000
                   verification_status:
                     type: string
                     enum:
-                      - IN_PROGRESS
-                      - VERIFIED
-                      - FAILED
-                      - EXPIRED
-                      - BLOCKED
+                    - IN_PROGRESS
+                    - VERIFIED
+                    - FAILED
+                    - EXPIRED
+                    - BLOCKED
                     example: VERIFIED
-
                   expires_in:
                     type: integer
                     example: 60
-
-        "401":
+        '401':
           description: Verification failed
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Verification requirements not satisfied
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/verification/sessions/{id}/status:
     get:
       tags:
-        - Attendance Verification
-
+      - Attendance Verification
       summary: Get Verification Session Status
+      description: 'Returns current attendance verification session status and completed
+        verification steps.
 
-      description: |
-        Returns current attendance verification session status and completed verification steps.
-
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
-
-          schema:
-            type: string
-
-          example: "550e8400-e29b-41d4-a716-446655440000"
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+        example: 550e8400-e29b-41d4-a716-446655440000
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Verification session status fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   verification_session_id:
                     type: string
-                    example: "550e8400-e29b-41d4-a716-446655440000"
-
+                    example: 550e8400-e29b-41d4-a716-446655440000
                   verification_status:
                     type: string
                     enum:
-                      - IN_PROGRESS
-                      - VERIFIED
-                      - FAILED
-                      - EXPIRED
-                      - BLOCKED
-
+                    - IN_PROGRESS
+                    - VERIFIED
+                    - FAILED
+                    - EXPIRED
+                    - BLOCKED
                     example: IN_PROGRESS
-
                   completed_steps:
                     type: array
-
                     items:
                       type: string
-
                     example:
-                      - SECRET_CODE
-                      - LIVE_SELFIE
-
+                    - SECRET_CODE
+                    - LIVE_SELFIE
                   pending_steps:
                     type: array
-
                     items:
                       type: string
-
                     example:
-                      - GPS
-                      - COMPLETE_VERIFICATION
-
+                    - GPS
+                    - COMPLETE_VERIFICATION
                   expires_at:
                     type: string
                     format: date-time
-
-                    example: "2026-05-21T08:35:00Z"
-
-        "401":
+                    example: '2026-05-21T08:35:00Z'
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "404":
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
           description: Verification session not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
   /api/v1/biometrics/face-enrollment:
     post:
       tags:
-        - Biometrics
-
+      - Biometrics
       summary: Enroll Employee Face Reference
+      description: 'Register employee face reference image for:
 
-      description: |
-        Register employee face reference image for:
         - attendance face verification
+
         - liveness validation support
+
         - future biometric verification workflows
 
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       requestBody:
         required: true
-
         content:
           multipart/form-data:
             schema:
               type: object
-
               required:
-                - employee_id
-                - image
-
+              - employee_id
+              - image
               properties:
                 employee_id:
                   type: integer
                   example: 1001
-
                 image:
                   type: string
                   format: binary
                   description: Face reference image file
-
       responses:
-        "201":
+        '201':
           description: Face enrollment completed successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   enrollment_completed:
                     type: boolean
                     example: true
-
                   employee_id:
                     type: integer
                     example: 1001
-
                   quality_score:
                     type: number
                     format: float
                     example: 0.93
-
-        "401":
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "403":
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
           description: Face enrollment failed
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ForbiddenResponse"
-
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/biometrics/face-enrollment/{employee_id}:
     get:
       tags:
-        - Biometrics
-
+      - Biometrics
       summary: Get Employee Face Enrollment Status
+      description: 'Returns employee biometric enrollment status and enrollment metadata.
 
-      description: |
-        Returns employee biometric enrollment status and enrollment metadata.
-
+        '
       security:
-        - bearerAuth: []
-
+      - bearerAuth: []
       parameters:
-        - in: path
-          name: employee_id
-          required: true
-
-          schema:
-            type: integer
-
-          example: 1001
-
-        - $ref: "#/components/parameters/AcceptLanguageHeader"
-
+      - in: path
+        name: employee_id
+        required: true
+        schema:
+          type: integer
+        example: 1001
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
       responses:
-        "200":
+        '200':
           description: Face enrollment status fetched successfully
-
           content:
             application/json:
               schema:
                 type: object
-
                 properties:
                   success:
                     type: boolean
                     example: true
-
                   employee_id:
                     type: integer
                     example: 1001
-
                   enrolled:
                     type: boolean
                     example: true
-
                   biometric_status:
                     type: string
-
                     enum:
-                      - NOT_ENROLLED
-                      - PENDING
-                      - ACTIVE
-                      - FAILED
-                      - INACTIVE
-
+                    - NOT_ENROLLED
+                    - PENDING
+                    - ACTIVE
+                    - FAILED
+                    - INACTIVE
                     example: ACTIVE
                   last_updated:
                     type: string
                     format: date-time
-                    example: "2026-05-21T08:30:00Z"
-
-        "401":
+                    example: '2026-05-21T08:30:00Z'
+        '401':
           description: Unauthorized
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
-
-        "404":
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
           description: Employee biometric enrollment not found
-
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ErrorResponse"
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/devices/activate:
+    post:
+      tags:
+      - Device Registration
+      summary: Activate Registered Device
+      description: 'Activate a previously registered mobile device using SMS OTP.
 
+
+        The OTP field name is otp, not sms_otp.
+
+        After successful activation, startup authentication should return status_id
+        = 1 and the app can open the Dashboard.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - location_code
+              - device_uuid
+              - otp
+              properties:
+                location_code:
+                  type: string
+                  example: GAL-001
+                device_uuid:
+                  type: string
+                  example: TEST-DEVICE-032
+                otp:
+                  type: string
+                  example: '123456'
+      responses:
+        '200':
+          description: Device activation result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Invalid OTP
+        '400':
+          description: Missing location_code, otp, or device_uuid
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/devices/authenticate:
+    post:
+      tags:
+      - Device Registration
+      summary: Authenticate Registered Device
+      description: 'Authenticate a registered service-location device during mobile
+        app startup.
+
+
+        Startup routing rules confirmed by testing:
+
+        - If success = false, redirect to Register Device screen.
+
+        - If success = true and device.status_id = 2, redirect to Activation screen.
+
+        - If success = true and device.status_id = 1, open Dashboard.
+
+
+        The tested endpoint is POST /api/v1/devices/authenticate.
+
+        '
+      parameters:
+      - $ref: '#/components/parameters/AcceptLanguageHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - device_uuid
+              - location_id
+              properties:
+                device_uuid:
+                  type: string
+                  example: TEST-DEVICE-032
+                location_id:
+                  type: integer
+                  example: 9
+      responses:
+        '200':
+          description: Device authentication result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: No data available
+                  device:
+                    type: object
+                    properties:
+                      location_id:
+                        type: integer
+                        example: 9
+                      location_name:
+                        type: string
+                        example: Galle Branch
+                      status_id:
+                        type: integer
+                        example: 2
+                      status_name:
+                        type: string
+                        example: Inactive
+        '400':
+          description: device_uuid and location_id are required
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 components:
   securitySchemes:
     bearerAuth:
@@ -4311,42 +3603,34 @@ components:
   schemas:
     ErrorResponse:
       type: object
-
       properties:
         success:
           type: boolean
           example: false
-
         message:
           type: string
           example: Error message
     ForbiddenResponse:
       type: object
-
       properties:
         success:
           type: boolean
           example: false
-
         message:
           type: string
           example: Access denied
     User:
       type: object
-
       properties:
         id:
           type: integer
           example: 101
-
         user_name:
           type: string
           example: John Doe
-
         email:
           type: string
           example: admin@isign.lk
-
         role_id:
           type: integer
           example: 1
@@ -4355,20 +3639,22 @@ components:
       in: header
       name: Accept-Language
       required: false
-
       schema:
         type: string
         enum:
-          - en
-          - si
-          - ta
-
+        - en
+        - si
+        - ta
         default: en
+      description: 'Preferred response language.
 
-      description: |
-        Preferred response language.
 
         Supported values:
+
         - en = English
+
         - si = Sinhala
+
         - ta = Tamil
+
+        '
