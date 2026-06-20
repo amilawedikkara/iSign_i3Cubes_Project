@@ -38,6 +38,11 @@ tags:
 - name: Attendance Verification
   description: Secure attendance verification session APIs for secret code, selfie,
     liveness, GPS, and verification completion
+- name: Internal Verification
+  description: Internal backend-to-Python verification service APIs. These APIs are
+    not intended for direct mobile app access. They are used by the main backend
+    to perform image verification after receiving attendance verification requests
+    from the mobile app.
 - name: Biometrics
   description: Face enrollment, face verification, liveness detection, and future
     biometric support APIs
