@@ -3128,6 +3128,110 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ForbiddenResponse'
+  /api/v1/internal/verification/face/verify:
+    post:
+      tags:
+      - Internal Verification
+      summary: Internal Face Verification
+      description: 'Internal backend-to-Python face verification API.
+
+        This endpoint is used only by the main backend after the main backend validates
+        the verification session, resolves the trusted employee_id from the database,
+        and retrieves the enrolled reference face image from main backend storage.
+
+        The mobile app must not call this API directly.
+
+        The Python service only performs image validation and face comparison. It does
+        not validate attendance eligibility, roster, device, location, session ownership,
+        or final attendance creation.
+
+        '
+      security:
+      - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+              - verification_session_id
+              - employee_id
+              - reference_image
+              - live_selfie_image
+              properties:
+                verification_session_id:
+                  type: string
+                  description: Trusted verification session id created and validated by the main backend
+                  example: 550e8400-e29b-41d4-a716-446655440000
+                employee_id:
+                  type: integer
+                  description: Trusted employee id resolved by the main backend from database/session
+                  example: 101
+                reference_image:
+                  type: string
+                  format: binary
+                  description: Enrolled employee reference face image from main backend storage
+                live_selfie_image:
+                  type: string
+                  format: binary
+                  description: Live selfie image uploaded by the mobile app through the main backend
+                captured_at:
+                  type: string
+                  format: date-time
+                  example: '2026-05-21T08:30:00Z'
+                camera_source:
+                  type: string
+                  example: FRONT_CAMERA
+      responses:
+        '200':
+          description: Internal face verification completed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  face_detected:
+                    type: boolean
+                    example: true
+                  liveness_passed:
+                    type: boolean
+                    example: false
+                  face_verified:
+                    type: boolean
+                    example: true
+                  confidence_score:
+                    type: number
+                    format: float
+                    example: 0.94
+                  risk_score:
+                    type: number
+                    format: float
+                    example: 0.08
+                  message:
+                    type: string
+                    example: Face comparison completed successfully
+        '400':
+          description: Invalid image or request data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '401':
+          description: Internal authentication failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          description: Face verification failed or request is not allowed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ForbiddenResponse'
   /api/v1/verification/sessions/{id}/gps:
     post:
       tags:
