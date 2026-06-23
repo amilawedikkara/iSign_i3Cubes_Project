@@ -3690,7 +3690,7 @@ paths:
                   example: 9
       responses:
         '200':
-          description: Device authentication result
+          description: Device authentication result. Active registered devices should return success=true and status_id=1.
           content:
             application/json:
               schema:
@@ -3701,22 +3701,24 @@ paths:
                     example: true
                   message:
                     type: string
-                    example: No data available
+                    example: Device authenticated successfully
                   device:
                     type: object
+                    nullable: true
+                    description: Returned when a registered device is found for the provided device_uuid and location_id.
                     properties:
                       location_id:
                         type: integer
-                        example: 9
+                        example: 107
                       location_name:
                         type: string
-                        example: Galle Branch
+                        example: Mobile Test Branch
                       status_id:
                         type: integer
-                        example: 2
+                        example: 1
                       status_name:
                         type: string
-                        example: Inactive
+                        example: Active
         '400':
           description: device_uuid and location_id are required
           content:
