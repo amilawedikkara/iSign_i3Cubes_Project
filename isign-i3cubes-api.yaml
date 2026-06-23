@@ -3611,7 +3611,7 @@ paths:
                   example: '123456'
       responses:
         '200':
-          description: Device activation result
+          description: Device activation result with device/location details after successful activation
           content:
             application/json:
               schema:
@@ -3619,10 +3619,30 @@ paths:
                 properties:
                   success:
                     type: boolean
-                    example: false
+                    example: true
                   message:
                     type: string
-                    example: Invalid OTP
+                    example: Device activated successfully
+                  device:
+                    type: object
+                    nullable: true
+                    description: Returned when activation succeeds so the mobile app can save location data for startup authentication.
+                    properties:
+                      location_id:
+                        type: integer
+                        example: 107
+                      location_code:
+                        type: string
+                        example: MOB-TEST-001
+                      location_name:
+                        type: string
+                        example: Mobile Test Branch
+                      status_id:
+                        type: integer
+                        example: 1
+                      status_name:
+                        type: string
+                        example: Active
         '400':
           description: Missing location_code, otp, or device_uuid
           content:
