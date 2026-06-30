@@ -2965,18 +2965,17 @@ paths:
       tags:
       - Attendance Verification
       summary: Start Attendance Verification Session
-      description: 'Start secure attendance verification session for employee duty
-        check-in or check-out.
+      description: |
+        Start secure attendance verification session for employee duty check-in or check-out.
+        Prototype device identity uses device_uuid as a transitional request field.
+        Backend must validate device_uuid against the registered devices table and allow the session only for an active trusted device.
+        Backend must resolve the trusted service location from the registered device and must not trust request-body location_id.
+        Backend must validate the allocated employee, active employee status, attendance_type, and roster/shift eligibility where applicable.
 
-        This API validates:
-
-        - trusted registered device
-
-        - allocated employee
-
-        - active roster eligibility
-
-        '
+        Future preferred design:
+        /api/v1/devices/authenticate should issue a signed device_token for active registered devices.
+        Mobile verification APIs should then use Authorization: Bearer <device_token>.
+        When device_token is implemented, device_uuid should be removed from this request body.
       security:
       - bearerAuth: []
       parameters:
@@ -2990,6 +2989,7 @@ paths:
               required:
               - employee_id
               - attendance_type
+              - device_uuid
               properties:
                 employee_id:
                   type: integer
@@ -3000,6 +3000,10 @@ paths:
                   - CHECK_IN
                   - CHECK_OUT
                   example: CHECK_IN
+                device_uuid:
+                  type: string
+                  description: Prototype/transitional device identity. Backend must validate this value against registered active devices and resolve the trusted service location from the device record. Future secure design should use device_token instead.
+                  example: DEVICE-001
       responses:
         '200':
           description: Verification session started successfully
