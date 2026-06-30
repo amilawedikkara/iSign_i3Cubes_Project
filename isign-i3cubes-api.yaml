@@ -1093,9 +1093,12 @@ paths:
       tags:
       - Employee Management
       summary: Get Employees List
-      description: 'Returns paginated list of employees.
-
-        '
+      description: |
+        Returns paginated list of employees.
+        Admin users may use this data for employee management.
+        Manager users have view-only access to employee profile data.
+        The existing employee view panel must display profile_image_url when available and fall back to initials when null.
+        The Edit Employee button must be visible only for admin users and hidden for manager users.
       security:
       - bearerAuth: []
       parameters:
@@ -1158,6 +1161,22 @@ paths:
                         employee_code:
                           type: string
                           example: EMP001
+                        gid:
+                          type: string
+                          description: GID (Emp ID). Permanent employee identity number used by the organization.
+                          example: '901991'
+                        gender:
+                          type: string
+                          enum:
+                          - Male
+                          - Female
+                          - Other
+                          example: Male
+                        profile_image_url:
+                          type: string
+                          nullable: true
+                          description: Employee profile image URL used by the existing employee view panel. UI should fall back to initials when null.
+                          example: https://example.com/uploads/employees/901991/profile.jpg
                         full_name:
                           type: string
                           example: John Doe
@@ -1241,6 +1260,8 @@ paths:
               type: object
               required:
               - employee_code
+              - gid
+              - gender
               - full_name
               - designation_id
               - permanent_location_ids
@@ -1248,7 +1269,20 @@ paths:
               properties:
                 employee_code:
                   type: string
+                  description: Company-issued employee code used for attendance verification. This is different from gid. employee_code is later treated as the employee secret number in attendance verification modules and must be editable only by admin users.
                   example: EMP001
+                gid:
+                  type: string
+                  description: GID (Emp ID). Permanent employee identity number used by the organization, similar to an EPF number. Assigned during employee creation and normally unchanged. Admin may update only to correct mistakes made during employee creation.
+                  example: '901991'
+                gender:
+                  type: string
+                  description: Employee gender captured during employee creation. Normally unchanged. Admin may update only to correct mistakes made during employee creation.
+                  enum:
+                  - Male
+                  - Female
+                  - Other
+                  example: Male
                 full_name:
                   type: string
                   example: John Doe
@@ -1289,9 +1323,10 @@ paths:
       tags:
       - Employee Management
       summary: Update Employee
-      description: 'Update existing employee.
-
-        '
+      description: |
+        Update existing employee. Admin-only endpoint.
+        Admin may update employee_code and profile fields.
+        Admin may correct gid/gender only when mistakes were made during employee creation.
       security:
       - bearerAuth: []
       parameters:
@@ -1309,6 +1344,27 @@ paths:
             schema:
               type: object
               properties:
+                employee_code:
+                  type: string
+                  description: Company-issued employee code used for attendance verification. This is different from gid. employee_code is later treated as the employee secret number in attendance verification modules and must be editable only by admin users.
+                  example: EMP001
+                gid:
+                  type: string
+                  description: GID (Emp ID). Permanent employee identity number used by the organization. Normally unchanged. Admin may update only to correct mistakes made during employee creation.
+                  example: '901991'
+                gender:
+                  type: string
+                  description: Employee gender. Normally unchanged. Admin may update only to correct mistakes made during employee creation.
+                  enum:
+                  - Male
+                  - Female
+                  - Other
+                  example: Male
+                profile_image_url:
+                  type: string
+                  nullable: true
+                  description: Employee profile image URL used by the existing employee view panel. UI should fall back to initials when null.
+                  example: https://example.com/uploads/employees/901991/profile.jpg
                 full_name:
                   type: string
                   example: John Doe
@@ -1354,9 +1410,10 @@ paths:
       tags:
       - Employee Management
       summary: Delete Employee
-      description: 'Delete existing employee.
-
-        '
+      description: |
+        Delete existing employee. Admin-only endpoint.
+        Backend should preserve attendance, roster, assignment, and audit history.
+        Soft delete or employee deactivation is preferred over hard delete.
       security:
       - bearerAuth: []
       parameters:
@@ -1393,21 +1450,15 @@ paths:
       tags:
       - Employee Management
       summary: Create Temporary Employee Assignment
-      description: 'Temporarily assign an employee to one or more service locations.
-
+      description: |
+        Temporarily assign an employee to one or more service locations.
+        This endpoint is allowed for admin and manager users.
+        This is an operational temporary location allocation, not employee profile editing.
 
         Assignment Rules:
-
         1. Employee remains assigned until assignment_end_time.
-
         2. Assignment automatically expires after the configured end time.
-
-        3. Temporary location assignments automatically expire after the configured
-        end time.
-
-        4. Assignment activity is recorded in the audit trail.
-
-        '
+        3. Assignment activity is recorded in the audit trail.
       security:
       - bearerAuth: []
       parameters:
@@ -3789,3 +3840,4 @@ components:
         - ta = Tamil
 
         '
+
