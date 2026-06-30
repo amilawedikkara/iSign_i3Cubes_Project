@@ -3045,9 +3045,16 @@ paths:
       tags:
       - Attendance Verification
       summary: Verify Employee Secret Code
-      description: 'Verify employee secret code for attendance verification session.
+      description: |
+        Verify employee secret code for attendance verification session.
+        For the working prototype, the mobile app sends secret_code and backend compares it with employee.employee_code for the trusted employee resolved from the verification session.
+        employee_code is the prototype attendance secret code and must be visible/editable only to admin users.
+        Managers, device APIs, and attendance verification responses must not expose employee_code unless explicitly approved.
+        gid is GID (Emp ID), a visible employee identity number, and must never be used as the attendance secret code.
 
-        '
+        Future production hardening:
+        Replace plain employee_code comparison with a hashed secret-code design.
+        Backend should store employee_code_hash or attendance_secret_code_hash and compare hash(secret_code) with the stored hash.
       security:
       - bearerAuth: []
       parameters:
@@ -3069,7 +3076,8 @@ paths:
               properties:
                 secret_code:
                   type: string
-                  example: '4831'
+                  description: Secret code entered on mobile during attendance verification. For the prototype, backend compares this value with employee.employee_code for the trusted employee resolved from the verification session.
+                  example: EMP001
       responses:
         '200':
           description: Secret code verified successfully
